@@ -1,0 +1,634 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script>if(localStorage.getItem('scholar-theme')==='light')document.documentElement.setAttribute('data-theme','light');</script>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>User Profile - GuruAI</title>
+
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@500;600;700;800&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com"></script>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+
+<script>
+    tailwind.config = {
+        theme: {
+            extend: {
+                colors: {
+                    background: '#0d0d0f',
+                    surface: '#131315',
+                    'surface-container': '#1a1a1d',
+                    'on-surface': '#f6f3f5',
+                    'on-surface-variant': '#a8a0b0',
+                    primary: '#d095ff',
+                    error: '#ffb4ab',
+                },
+                fontFamily: {
+                    body: ['Inter', 'sans-serif'],
+                    headline: ['Plus Jakarta Sans', 'sans-serif'],
+                }
+            }
+        }
+    }
+</script>
+
+<style>
+    body { font-family: 'Inter', sans-serif; background-color: #0d0d0f; color: #f6f3f5; margin: 0; min-height: 100vh; overflow-x: hidden; }
+    .font-headline { font-family: 'Plus Jakarta Sans', sans-serif; }
+    
+    /* ── Creative Animated Background Orbs ── */
+    .bg-orb-1 {
+        position: fixed; top: -15%; left: -10%; width: 60vw; height: 60vw;
+        background: radial-gradient(circle, rgba(208,149,255,0.12) 0%, rgba(0,0,0,0) 65%);
+        border-radius: 50%; filter: blur(90px); z-index: -1; pointer-events: none;
+        animation: floatOrb1 20s ease-in-out infinite alternate;
+    }
+    .bg-orb-2 {
+        position: fixed; bottom: -20%; right: -15%; width: 75vw; height: 75vw;
+        background: radial-gradient(circle, rgba(0,227,253,0.08) 0%, rgba(0,0,0,0) 65%);
+        border-radius: 50%; filter: blur(100px); z-index: -1; pointer-events: none;
+        animation: floatOrb2 25s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes floatOrb1 { 
+        0% { transform: translate(0, 0) scale(1); } 
+        100% { transform: translate(50px, 80px) scale(1.1); } 
+    }
+    @keyframes floatOrb2 { 
+        0% { transform: translate(0, 0) scale(1); } 
+        100% { transform: translate(-60px, -90px) scale(1.15); } 
+    }
+
+    html[data-theme="light"] .bg-orb-1 { background: radial-gradient(circle, rgba(208,149,255,0.35) 0%, rgba(255,255,255,0) 65%); }
+    html[data-theme="light"] .bg-orb-2 { background: radial-gradient(circle, rgba(0,227,253,0.25) 0%, rgba(255,255,255,0) 65%); }
+    
+    /* LIGHT MODE CORE */
+    html[data-theme="light"] { color-scheme: light; }
+    html[data-theme="light"] body { background-color: #f4effa !important; color: #1a1126 !important; }
+    
+    html[data-theme="light"] header { background: rgba(244,239,250,0.85) !important; border-bottom-color: rgba(208,149,255,0.3) !important; }
+    html[data-theme="light"] header a { color: #2d1a50 !important; }
+    html[data-theme="light"] header a:hover { background: rgba(112,32,200,0.1) !important; color: #7020c8 !important; border-radius: 8px;}
+    html[data-theme="light"] .font-headline { color: #1a1126 !important; }
+    html[data-theme="light"] .text-on-surface-variant { color: #6b5a8a !important; }
+    
+    /* Buttons */
+    .btn-action { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); color: #f6f3f5; backdrop-filter: blur(10px); }
+    .btn-action:hover { background: rgba(255,255,255,0.08); border-color: rgba(208,149,255,0.4); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
+    html[data-theme="light"] .btn-action { background: rgba(255,255,255,0.8) !important; color: #2d1a50 !important; border-color: rgba(208,149,255,0.4) !important; }
+    html[data-theme="light"] .btn-action:hover { background: #eadeff !important; box-shadow: 0 4px 12px rgba(112,32,200,0.15) !important; }
+
+    .btn-logout { background: rgba(255,50,50,0.05); border: 1px solid rgba(255,50,50,0.15); color: #ffb4ab; backdrop-filter: blur(10px); }
+    .btn-logout:hover { background: rgba(255,50,50,0.15); border-color: rgba(255,50,50,0.4); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(255,50,50,0.15); }
+    html[data-theme="light"] .btn-logout { background: rgba(255,218,214,0.7) !important; color: #ba1a1a !important; border-color: rgba(186,26,26,0.2) !important; }
+    html[data-theme="light"] .btn-logout:hover { background: #ffdad6 !important; border-color: #ba1a1a !important; box-shadow: 0 4px 12px rgba(186,26,26,0.2) !important; }
+    
+    /* Profile identity card */
+    .identity-card {
+        background: rgba(26,26,29,0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06);
+        box-shadow: 0 20px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.1);
+        transition: all 0.3s ease;
+    }
+    .identity-card:hover { border-color: rgba(208,149,255,0.3); box-shadow: 0 24px 48px rgba(0,0,0,0.5), 0 0 40px rgba(208,149,255,0.1); }
+    html[data-theme="light"] .identity-card {
+        background: rgba(255,255,255,0.85) !important; border-color: rgba(208,149,255,0.3) !important;
+        box-shadow: 0 20px 40px rgba(112,32,200,0.08), inset 0 1px 0 #fff !important;
+    }
+    html[data-theme="light"] .identity-card:hover { border-color: rgba(112,32,200,0.4) !important; box-shadow: 0 24px 48px rgba(112,32,200,0.15) !important; }
+
+    /* Stat Cards */
+    .card-container { background: rgba(26,26,29,0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.04); }
+    .card-container:hover { border-color: rgba(255,255,255,0.1); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0,0,0,0.2); }
+    html[data-theme="light"] .card-container { background: rgba(255,255,255,0.6) !important; border-color: rgba(208,149,255,0.2) !important; }
+    html[data-theme="light"] .card-container:hover { background: rgba(255,255,255,0.9) !important; border-color: rgba(208,149,255,0.4) !important; box-shadow: 0 8px 24px rgba(112,32,200,0.08) !important; }
+    html[data-theme="light"] .card-container * { color: #1a1126 !important; }
+    html[data-theme="light"] .card-container .text-primary { color: #7020c8 !important; }
+    html[data-theme="light"] .card-container .text-\[\#00e3fd\] { color: #007a88 !important; }
+    html[data-theme="light"] .card-container .text-\[\#a5eea0\] { color: #006830 !important; }
+
+    /* Dividers */
+    .divider-line { border-top: 1px solid rgba(255,255,255,0.1); }
+    .divider-text { background: #0d0d0f; color: #a8a0b0; }
+    html[data-theme="light"] .divider-line { border-color: rgba(208,149,255,0.3) !important; }
+    html[data-theme="light"] .divider-text { color: #5a4a7a !important; background: #f4effa !important; }
+    
+    /* Pref pills */
+    .pref-pill { border: 1px solid rgba(255,255,255,0.1); background: rgba(26,26,29,0.5); backdrop-filter: blur(8px); transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1); }
+    .pref-pill:hover { border-color: #d095ff; background: rgba(208,149,255,0.08); transform: translateY(-2px); box-shadow: 0 4px 12px rgba(208,149,255,0.1); }
+    html[data-theme="light"] .pref-pill { background: rgba(255,255,255,0.7) !important; border-color: rgba(208,149,255,0.3) !important; color: #1a1126 !important; }
+    html[data-theme="light"] .pref-pill:hover { background: #fff !important; border-color: #7020c8 !important; box-shadow: 0 4px 12px rgba(112,32,200,0.12) !important; }
+    html[data-theme="light"] .pref-pill .material-symbols-outlined { color: #7020c8 !important; }
+    html[data-theme="light"] .pref-pill .text-xs { color: #6b5a8a !important; }
+    html[data-theme="light"] .pref-pill .dark-invert-text { color: #1a1126 !important; }
+
+    /* Theme Toggle Button */
+    #theme-toggle-user {
+        width: 38px; height: 38px; border-radius: 50%; border: 2px solid rgba(208,149,255,0.30);
+        background: rgba(208,149,255,0.10); color: #c57eff; cursor: pointer; display: flex; align-items: center; justify-content: center;
+        transition: all 0.22s ease; flex-shrink: 0; backdrop-filter: blur(10px);
+    }
+    #theme-toggle-user:hover {
+        background: rgba(208,149,255,0.25); border-color: #d095ff; color: #e0b0ff; transform: rotate(15deg) scale(1.08); box-shadow: 0 0 16px rgba(208,149,255,0.4);
+    }
+    html[data-theme="light"] #theme-toggle-user { border-color: rgba(100,30,200,0.30); background: rgba(100,30,200,0.08); color: #6010b8; }
+    html[data-theme="light"] #theme-toggle-user:hover { background: rgba(100,30,200,0.16); border-color: #7020c8; color: #5000a0; box-shadow: 0 0 16px rgba(100,30,200,0.25); }
+
+
+    /* EDIT MODE STYLES */
+    .edit-mode-section { background: rgba(19,19,21,0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.06); border-radius: 32px; padding: 40px; box-shadow: 0 20px 40px rgba(0,0,0,0.3); }
+    html[data-theme="light"] .edit-mode-section { background: rgba(255,255,255,0.85) !important; border-color: rgba(208,149,255,0.2) !important; box-shadow: 0 20px 40px rgba(112,32,200,0.06) !important; }
+
+    .ai-bubble {
+        background: rgba(208, 149, 255, 0.05); color: #e8e4ec; padding: 1rem 1.25rem;
+        border-radius: 0 1rem 1rem 1rem; border: 1px solid rgba(208, 149, 255, 0.2);
+        max-width: 85%; align-self: flex-start; line-height: 1.6; font-size: 0.95rem;
+    }
+    .user-bubble {
+        background: #1f1f22; color: #e8e4ec; padding: 1rem 1.25rem;
+        border-radius: 1rem 0 1rem 1rem; max-width: 85%; align-self: flex-end;
+        line-height: 1.6; font-size: 0.95rem; border: 1px solid rgba(255,255,255,0.05);
+    }
+    html[data-theme="light"] .ai-bubble { background: rgba(112, 32, 200, 0.06) !important; color: #1a1126 !important; border-color: rgba(112, 32, 200, 0.15) !important; }
+    html[data-theme="light"] .user-bubble { background: #d8ccf2 !important; color: #1a1126 !important; border-color: #c4b8e0 !important; }
+
+    .ai-bubble h1, .ai-bubble h2, .ai-bubble h3 { font-weight: 700; margin: 0.75rem 0 0.5rem; }
+    .ai-bubble ul, .ai-bubble ol { padding-left: 1.25rem; margin: 0.5rem 0; }
+    .ai-bubble li { margin: 0.25rem 0; }
+    .ai-bubble code { background: #262528; padding: 0.1rem 0.4rem; border-radius: 0.25rem; font-size: 0.85em; border: 1px solid rgba(255,255,255,0.1); }
+    .ai-bubble pre { background: #131315; padding: 1rem; border-radius: 0.75rem; overflow-x: auto; margin: 0.5rem 0; border: 1px solid rgba(255,255,255,0.1); }
+    html[data-theme="light"] .ai-bubble code, html[data-theme="light"] .ai-bubble pre { background: #f0ecf8 !important; color: #4a009a !important; border-color: #cfc4e8 !important; }
+
+    /* Custom scrollbar */
+    #memory-chat-feed::-webkit-scrollbar { width: 6px; }
+    #memory-chat-feed::-webkit-scrollbar-track { background: transparent; }
+    #memory-chat-feed::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+    html[data-theme="light"] #memory-chat-feed::-webkit-scrollbar-thumb { background: rgba(112,32,200,0.15); }
+</style>
+</head>
+
+<body class="flex flex-col min-h-screen relative">
+    <!-- Creative Ambient Background -->
+    <div class="bg-orb-1"></div>
+    <div class="bg-orb-2"></div>
+
+    <!-- Header -->
+    <header class="w-full flex items-center justify-between px-8 py-4 border-b border-white/5 bg-[#0d0d0f]/60 backdrop-blur-xl sticky top-0 z-50">
+        <a href="index.html" class="flex items-center gap-2 px-3 py-1.5 transition-colors group">
+            <span class="material-symbols-outlined text-[20px] text-[#f6f3f5] group-hover:text-primary transition-colors">arrow_back</span>
+            <span class="font-semibold text-sm text-[#f6f3f5] group-hover:text-primary transition-colors">Back to App</span>
+        </a>
+        <button id="theme-toggle-user" onclick="toggleThemeUser()" title="Toggle theme">
+            <span id="theme-icon-user" class="material-symbols-outlined">dark_mode</span>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="flex-1 flex flex-col items-center pt-16 pb-24 px-4 w-full max-w-4xl mx-auto relative z-10">
+        
+        <!-- ════════ VIEW MODE ════════ -->
+        <div id="view-mode" class="w-full flex flex-col items-center">
+            
+            <!-- Beautiful Side-by-Side Identity Card -->
+            <div class="identity-card rounded-full p-4 pr-12 flex items-center gap-6 mb-8 w-max mx-auto">
+                <div class="relative w-24 h-24 group cursor-pointer flex-shrink-0" onclick="alert('Avatar change capability coming soon!')">
+                    <div class="w-full h-full rounded-full overflow-hidden border-2 border-primary/40 p-1 group-hover:border-primary transition-all duration-300">
+                        <img alt="User profile avatar" class="w-full h-full object-cover rounded-full"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8FTVxMxdbx6PJwCCHMcqTv6AXE94gC9SL37mcBOzCXXv6U2ihHSKPKZITwrn_TtjN76-w7lqZiOEV1AqRrMpl4dNw79FZkSznR4Qcw6VH3hZmX7qO6BJpoCC375DOSLxqoMyFAuv1eoKlidt3mBAgwOkZy8a9sb7apll5jw8gOwrOujf-DOhUj2fTIYMcX-tpGjCpDPs4iuWXwWxCi8p5j4QLcJjp1f5X9eELMSVtd6z1_OewXnJZGWfFeVrF0FyuXnjx3EGZYazx" />
+                    </div>
+                    <!-- Overlay for edit hover -->
+                    <div id="avatar-edit-overlay-view" class="absolute inset-0 bg-black/60 rounded-full flex-col items-center justify-center opacity-0 transition-opacity hidden group-hover:opacity-100 backdrop-blur-sm">
+                        <span class="material-symbols-outlined text-white text-2xl">photo_camera</span>
+                    </div>
+                </div>
+                <!-- Name and Level stacked side-by-side with avatar -->
+                <div class="flex flex-col text-left">
+                    <h1 id="display-name" class="text-3xl font-extrabold font-headline text-white tracking-tight leading-tight dark-invert-text">The Scholar</h1>
+
+                </div>
+            </div>
+
+            <!-- Bio below the card -->
+            <p id="display-bio" class="text-center text-on-surface-variant max-w-2xl text-[15px] leading-relaxed mb-10">
+                Computational Linguist exploring the intersection of biological neural pathways and artificial intelligence architectures. Late-night thinker and relentless seeker of optimized knowledge.
+            </p>
+
+            <div class="flex flex-wrap items-center justify-center gap-4 mb-16">
+                <button onclick="toggleEditMode(true)" class="btn-action px-6 py-2.5 rounded-full font-bold text-[13px] uppercase tracking-wide transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">edit</span> Edit Profile
+                </button>
+                <button class="btn-action px-6 py-2.5 rounded-full font-bold text-[13px] uppercase tracking-wide transition-all focus:outline-none focus:ring-2 focus:ring-primary/50 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">share</span> Share Scholar ID
+                </button>
+                <button onclick="logout()" class="btn-logout px-6 py-2.5 rounded-full font-bold text-[13px] uppercase tracking-wide transition-all focus:outline-none focus:ring-2 focus:ring-error/50 flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[18px]">logout</span> Logout
+                </button>
+            </div>
+
+            <div class="w-full grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+                <div class="card-container rounded-3xl p-8 flex flex-col justify-center items-center transition-all">
+                    <p class="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">done_all</span> Total Quizzes Attempted</p>
+                    <div class="flex items-baseline gap-2">
+                        <span id="stat-quizzes" class="text-[3.5rem] font-black font-headline tracking-tighter text-primary leading-none">—</span>
+
+                    </div>
+                </div>
+                <div class="card-container rounded-3xl p-8 flex flex-col justify-center items-center transition-all">
+                    <p class="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant mb-3 flex items-center gap-1.5"><span class="material-symbols-outlined text-[14px]">military_tech</span> Average Mastery Score</p>
+                    <div class="flex items-baseline gap-2">
+                        <span id="stat-mastery" class="text-[3.5rem] font-black font-headline tracking-tighter text-[#00e3fd] leading-none">—</span>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="w-full max-w-4xl">
+                <div class="relative flex items-center justify-center mb-10">
+                    <div class="absolute w-full divider-line"></div>
+                    <div class="relative px-6 divider-text text-sm font-black tracking-[0.2em] uppercase rounded-full border border-white/5 shadow-sm py-1.5">
+                        Interests & Preferences
+                    </div>
+                </div>
+                <div id="preferences-container" class="flex flex-wrap justify-center gap-4 px-4 pb-8">
+                    <div class="text-on-surface-variant text-sm flex items-center gap-2">
+                        <span class="material-symbols-outlined animate-spin text-[18px]">progress_activity</span>
+                        Loading from memory...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ════════ EDIT MODE ════════ -->
+        <div id="edit-mode" class="hidden w-full flex flex-col items-center">
+            
+            <div class="w-full max-w-3xl flex flex-col gap-6 mb-10 edit-mode-section relative overflow-hidden group">
+                <!-- Nice decorative glow back -->
+                <div class="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full filter blur-3xl group-hover:bg-primary/10 transition-colors pointer-events-none"></div>
+
+                <div class="flex items-center gap-6 mb-2 relative z-10">
+                    <div class="relative w-24 h-24 group/ava cursor-pointer flex-shrink-0" onclick="alert('Avatar upload placeholder')">
+                        <div class="w-full h-full rounded-full overflow-hidden border-2 border-primary/40 p-1 group-hover/ava:border-primary transition-all">
+                            <img alt="User profile avatar" class="w-full h-full object-cover rounded-full"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8FTVxMxdbx6PJwCCHMcqTv6AXE94gC9SL37mcBOzCXXv6U2ihHSKPKZITwrn_TtjN76-w7lqZiOEV1AqRrMpl4dNw79FZkSznR4Qcw6VH3hZmX7qO6BJpoCC375DOSLxqoMyFAuv1eoKlidt3mBAgwOkZy8a9sb7apll5jw8gOwrOujf-DOhUj2fTIYMcX-tpGjCpDPs4iuWXwWxCi8p5j4QLcJjp1f5X9eELMSVtd6z1_OewXnJZGWfFeVrF0FyuXnjx3EGZYazx" />
+                        </div>
+                        <div class="absolute inset-0 bg-black/60 rounded-full flex flex-col items-center justify-center opacity-0 transition-opacity group-hover/ava:opacity-100 backdrop-blur-sm">
+                            <span class="material-symbols-outlined text-white text-xl mb-1">upload</span>
+                            <span class="text-[9px] font-bold uppercase text-white tracking-wider">Change</span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <label class="text-[10px] font-bold uppercase tracking-widest text-primary mb-1.5 block ml-1">Display Name</label>
+                        <input id="input-name" type="text" value="The Scholar"
+                            class="w-full bg-[#1a1a1d]/80 border border-white/10 rounded-2xl px-5 py-3.5 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all font-headline font-black text-xl dark-invert-input shadow-inner" />
+                    </div>
+                </div>
+                
+                <div class="relative z-10">
+                    <label class="text-[10px] font-bold uppercase tracking-widest text-primary mb-1.5 block ml-1">Bio</label>
+                    <textarea id="input-bio" rows="3"
+                        class="w-full bg-[#1a1a1d]/80 border border-white/10 rounded-2xl px-5 py-4 text-white focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary/50 transition-all text-sm resize-none dark-invert-input leading-relaxed shadow-inner">Computational Linguist exploring the intersection of biological neural pathways and artificial intelligence architectures. Late-night thinker and relentless seeker of optimized knowledge.</textarea>
+                </div>
+                
+                <div class="flex justify-end gap-3 mt-4 pt-6 border-t border-white/10 dark-invert-border relative z-10">
+                    <button onclick="toggleEditMode(false)" class="btn-action px-6 py-2.5 rounded-full font-bold text-[13px] uppercase tracking-wide">Cancel</button>
+                    <button onclick="saveProfile()" class="bg-gradient-to-br from-[#d095ff] to-[#ae3ceb] text-white px-8 py-2.5 rounded-full font-bold shadow-lg shadow-primary/30 hover:-translate-y-0.5 active:translate-y-0 transition-all text-[13px] uppercase tracking-wide flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[18px]">save</span> Save Changes
+                    </button>
+                </div>
+            </div>
+
+            <!-- MY MEMORY Interactive Section -->
+            <div class="w-full max-w-3xl edit-mode-section flex flex-col relative overflow-hidden">
+                <div class="flex items-center gap-5 mb-8 pb-5 border-b border-white/10 dark-invert-border relative z-10">
+                    <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary/20 to-primary/5 border border-primary/20 flex items-center justify-center shadow-inner">
+                        <span class="material-symbols-outlined text-primary text-[28px]" style="font-variation-settings:'FILL' 1">psychology</span>
+                    </div>
+                    <div>
+                        <p class="font-black text-2xl text-white dark-invert-text font-headline tracking-tight">My Memory UI</p>
+                        <p class="text-[12px] text-on-surface-variant font-medium mt-0.5">Chat to update your core study preferences. All edits sync globally.</p>
+                    </div>
+                    <button onclick="clearMemoryEdit()" class="ml-auto text-xs text-error/60 hover:text-error hover:bg-error/10 px-4 py-2 rounded-xl transition-all flex items-center gap-2 border border-error/20 bg-error/5 font-bold uppercase tracking-wider backdrop-blur-md">
+                        <span class="material-symbols-outlined text-[16px]">delete_sweep</span>
+                        Clear
+                    </button>
+                </div>
+
+                <!-- Memory Chips preview -->
+                <div class="mb-8 relative z-10">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-4 ml-1">Live Preference Storage</p>
+                    <div id="edit-memory-chips" class="flex flex-wrap gap-2.5 min-h-[32px]"></div>
+                </div>
+
+                <!-- Memory Chat Feed -->
+                <div id="memory-chat-feed" class="flex-1 w-full max-h-[450px] min-h-[350px] overflow-y-auto pr-3 flex flex-col gap-6 mb-6 relative z-10">
+                    <!-- Loaded dynamically -->
+                </div>
+
+                <!-- Memory Input -->
+                <div class="mt-auto relative z-10 pt-4">
+                    <div class="bg-[#1a1a1d] dark-invert-bg rounded-2xl p-4 pl-6 flex gap-4 items-end border border-white/10 dark-invert-border focus-within:border-primary/50 focus-within:shadow-[0_8px_30px_rgba(208,149,255,0.15)] transition-all">
+                        <textarea id="memory-chat-input"
+                            class="flex-1 bg-transparent border-none focus:ring-0 text-white dark-invert-text placeholder:text-on-surface-variant/40 resize-none font-body text-[15px] pt-1"
+                            rows="2"
+                            placeholder="Tell me about yourself — preferences, background, how you like to learn..."
+                            onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendMemoryMessage();}"></textarea>
+                        <button onclick="sendMemoryMessage()" id="memory-chat-send"
+                            class="w-12 h-12 rounded-xl bg-gradient-to-br from-[#d095ff] to-[#ae3ceb] flex items-center justify-center text-white shadow-[0_4px_16px_rgba(208,149,255,0.4)] active:scale-95 hover:-translate-y-0.5 transition-all flex-shrink-0">
+                            <span class="material-symbols-outlined text-[20px]">send</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // --- THEME TOGGLE LOGIC ---
+        function toggleThemeUser() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            if (isLight) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('scholar-theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('scholar-theme', 'light');
+            }
+            applyThemeIcon();
+            applyEditModeColors();
+        }
+
+        function applyThemeIcon() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            const icon = document.getElementById('theme-icon-user');
+            if (icon) icon.textContent = isLight ? 'wb_sunny' : 'dark_mode';
+        }
+
+        function applyEditModeColors() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            
+            document.querySelectorAll('.dark-invert-text').forEach(el => {
+                el.style.color = isLight ? '#1a1126' : '';
+            });
+            
+            document.querySelectorAll('.dark-invert-input, .dark-invert-bg').forEach(el => {
+                el.style.backgroundColor = isLight ? '#f4effa' : '';
+                el.style.color = isLight ? '#1a1126' : '';
+                el.style.borderColor = isLight ? '#cfc4e8' : '';
+            });
+
+            document.querySelectorAll('.dark-invert-border').forEach(el => {
+                el.style.borderColor = isLight ? '#cfc4e8' : '';
+            });
+            
+            // Fix input fields in light mode being slightly different
+            const inputs = document.querySelectorAll('input.dark-invert-input, textarea.dark-invert-input');
+            inputs.forEach(inp => {
+                inp.style.backgroundColor = isLight ? '#fff' : '';
+                inp.style.boxShadow = isLight ? 'inset 0 2px 4px rgba(0,0,0,0.02)' : '';
+            });
+        }
+
+        // --- PROFILE VIEW / EDIT MODE LOGIC ---
+        function toggleEditMode(showEdit) {
+            const viewMode = document.getElementById('view-mode');
+            const editMode = document.getElementById('edit-mode');
+            
+            if (showEdit) {
+                viewMode.classList.add('hidden');
+                editMode.classList.remove('hidden');
+                editMode.classList.add('flex');
+                
+                if (document.getElementById('memory-chat-feed').innerHTML.trim() === '') {
+                    loadMemoryChatHistory();
+                }
+                
+                applyEditModeColors();
+            } else {
+                editMode.classList.add('hidden');
+                editMode.classList.remove('flex');
+                viewMode.classList.remove('hidden');
+                
+                fetchPreferences();
+            }
+        }
+
+        async function saveProfile() {
+            const newName = document.getElementById('input-name').value.trim() || 'The Scholar';
+            const newBio  = document.getElementById('input-bio').value.trim();
+
+            try {
+                await fetch('/api/user/profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name: newName, bio: newBio }),
+                });
+            } catch (e) {
+                console.error('Failed to save profile', e);
+            }
+
+            document.getElementById('display-name').textContent = newName;
+            document.getElementById('display-bio').textContent = newBio;
+
+            toggleEditMode(false);
+        }
+
+        async function loadProfile() {
+            try {
+                const profile = await fetch('/api/user/profile').then(r => r.json());
+                document.getElementById('display-name').textContent = profile.name || 'The Scholar';
+                document.getElementById('display-bio').textContent  = profile.bio  || '';
+                document.getElementById('input-name').value = profile.name || 'The Scholar';
+                document.getElementById('input-bio').value  = profile.bio  || '';
+            } catch (e) { console.error('Failed to load profile', e); }
+        }
+
+        async function loadStats() {
+            try {
+                const stats = await fetch('/api/user/stats').then(r => r.json());
+                document.getElementById('stat-quizzes').textContent = stats.total_questions.toLocaleString();
+                document.getElementById('stat-mastery').textContent = stats.average_mastery_pct + '%';
+            } catch (e) { console.error('Failed to load stats', e); }
+        }
+
+        // --- PREFERENCES LOGIC (View Mode) ---
+        async function fetchPreferences() {
+            const container = document.getElementById('preferences-container');
+            const editContainer = document.getElementById('edit-memory-chips');
+            
+            try {
+                const res = await fetch('/api/memory').then(r => r.json());
+                const items = res.items || [];
+                
+                container.innerHTML = '';
+                if (editContainer) editContainer.innerHTML = '';
+                
+                if (items.length === 0) {
+                    container.innerHTML = '<span class="text-on-surface-variant text-sm italic font-medium">No preferences stored in memory yet.</span>';
+                    if (editContainer) editContainer.innerHTML = '<span class="text-[13px] text-on-surface-variant italic px-2 py-1">Start chatting below to extract and save preferences.</span>';
+                    return;
+                }
+
+                // Render View Mode Pills
+                items.forEach((item, index) => {
+                    let title = item;
+                    let sub = "";
+                    if (item.includes(":")) {
+                        const parts = item.split(":");
+                        title = parts[0].trim();
+                        sub = parts.slice(1).join(":").trim();
+                    } else if (item.length > 30) {
+                        sub = item;
+                        title = "Learned Preference";
+                    }
+
+                    const icons = ['psychology', 'menu_book', 'bolt', 'tips_and_updates', 'grid_view', 'science'];
+                    const icon = icons[index % icons.length];
+
+                    const pill = document.createElement('div');
+                    pill.className = "pref-pill rounded-2xl px-6 py-4 flex items-center gap-4 cursor-default w-full sm:w-[calc(50%-0.5rem)]";
+                    pill.innerHTML = `
+                        <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                            <span class="material-symbols-outlined text-primary text-[22px]">${icon}</span>
+                        </div>
+                        <div class="flex flex-col">
+                            <span class="font-bold text-[15px] leading-tight text-white dark-invert-text font-headline">${title}</span>
+                            ${sub ? `<span class="text-[13px] text-on-surface-variant leading-snug mt-1 opacity-90">${sub}</span>` : ''}
+                        </div>
+                    `;
+                    container.appendChild(pill);
+                });
+
+                // Render Edit Mode Chips
+                items.forEach((item, index) => {
+                    const chip = document.createElement('div');
+                    chip.className = "flex items-center gap-2 bg-gradient-to-r from-primary/15 to-primary/5 border border-primary/30 rounded-full py-1.5 pl-4 pr-2 group shadow-sm";
+                    chip.innerHTML = `
+                        <span class="material-symbols-outlined text-primary text-[15px]" style="font-variation-settings:'FILL' 1">memory</span>
+                        <span class="text-[13px] font-semibold text-white dark-invert-text">${item}</span>
+                        <button onclick="deleteMemoryChip(${index})" class="opacity-0 group-hover:opacity-100 transition-opacity ml-1 bg-error/20 hover:bg-error rounded-full w-6 h-6 flex justify-center items-center">
+                            <span class="material-symbols-outlined text-error hover:text-[#410002] text-[14px]">close</span>
+                        </button>
+                    `;
+                    editContainer.appendChild(chip);
+                });
+
+                applyEditModeColors();
+            } catch (e) {
+                container.innerHTML = '<span class="text-error text-sm">Failed to load preferences.</span>';
+                console.error(e);
+            }
+        }
+
+        // --- MEMORY CHAT LOGIC (Edit Mode) ---
+        async function loadMemoryChatHistory() {
+            try {
+                const res = await fetch('/api/memory/chat').then(r => r.json());
+                const feed = document.getElementById("memory-chat-feed");
+                feed.innerHTML = "";
+
+                if (!res.history || res.history.length === 0) {
+                    appendMemoryBubble("assistant", "Hi! 👋 I'm your Memory AI. If you want to refine how your tutors interact with you, just chat with me here! For example: *\"I prefer bullet points\"* or *\"I'm a visual learner\"*.");
+                } else {
+                    res.history.forEach(m => appendMemoryBubble(m.role, m.content));
+                }
+            } catch (e) {
+                console.error("Error loading chat history", e);
+            }
+        }
+
+        function appendMemoryBubble(role, content) {
+            const feed = document.getElementById("memory-chat-feed");
+            if (!feed) return;
+            const wrapper = document.createElement("div");
+            wrapper.className = "flex flex-col gap-1 w-full " + (role === "user" ? "items-end" : "items-start");
+            wrapper.innerHTML = role === "user"
+                ? `<span class="text-[10px] font-bold uppercase tracking-widest text-[#a8a0b0] px-1 ml-auto">You</span>
+                   <div class="user-bubble shadow-lg">${typeof marked !== 'undefined' ? marked.parse(content) : content}</div>`
+                : `<div class="flex items-center gap-2 px-1 mb-1">
+                       <div class="w-7 h-7 rounded-full bg-gradient-to-br from-primary to-[#b06cf0] flex items-center justify-center shadow-lg">
+                           <span class="material-symbols-outlined text-[15px] text-[#131315]" style="font-variation-settings:'FILL' 1">psychology</span>
+                       </div>
+                       <span class="text-[10px] font-black uppercase tracking-widest text-primary">Memory Engine</span>
+                   </div>
+                   <div class="ai-bubble shadow-lg">${typeof marked !== 'undefined' ? marked.parse(content) : content}</div>`;
+            feed.appendChild(wrapper);
+            feed.scrollTop = feed.scrollHeight;
+            applyEditModeColors();
+            return wrapper;
+        }
+
+        window.sendMemoryMessage = async function () {
+            const input = document.getElementById("memory-chat-input");
+            const sendBtn = document.getElementById("memory-chat-send");
+            const text = input.value.trim();
+            if (!text) return;
+
+            input.value = "";
+            appendMemoryBubble("user", text);
+
+            const feed = document.getElementById("memory-chat-feed");
+            const thinking = document.createElement("div");
+            thinking.className = "flex flex-col gap-1 items-start w-full mt-2";
+            thinking.innerHTML = `<div class="ai-bubble flex items-center gap-2 !py-3">
+                <div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                <div class="w-2 h-2 rounded-full bg-primary animate-pulse w-animation-delay-1"></div>
+                <div class="w-2 h-2 rounded-full bg-primary animate-pulse w-animation-delay-2"></div>
+            </div>`;
+            feed.appendChild(thinking);
+            feed.scrollTop = feed.scrollHeight;
+
+            input.disabled = true;
+            sendBtn.disabled = true;
+
+            try {
+                const res = await fetch('/api/memory/chat', {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ message: text }),
+                }).then(r => r.json());
+
+                thinking.remove();
+                appendMemoryBubble("assistant", res.reply);
+                
+                fetchPreferences();
+
+            } catch (err) {
+                thinking.querySelector(".ai-bubble").textContent = "❌ Connection to Memory Core failed.";
+            } finally {
+                input.disabled = false;
+                sendBtn.disabled = false;
+                input.focus();
+            }
+        }
+
+        window.deleteMemoryChip = async function (index) {
+            await fetch(`/api/memory/${index}`, { method: "DELETE" }).then(r => r.json());
+            fetchPreferences();
+        }
+
+        window.clearMemoryEdit = async function () {
+            if (!confirm("OBLITERATE ALL MEMORIES? This cannot be undone and your global AI preferences will be wiped.")) return;
+            await fetch(`/api/memory`, { method: "DELETE" }).then(r => r.json());
+            fetchPreferences();
+            loadMemoryChatHistory(); 
+        }
+
+        async function logout() {
+            if (confirm("Are you sure you want to log out?")) {
+                await fetch('/api/auth/logout', { method: 'POST' });
+                window.location.href = '/login.html';
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            applyThemeIcon();
+            fetchPreferences();
+            loadProfile();
+            loadStats();
+        });
+    </script>
+</body>
+</html>

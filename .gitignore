@@ -1,0 +1,36 @@
+# Secrets
+.env
+
+# Local AI-assistant instructions (kept out of the public repo)
+CLAUDE.md
+.claude/
+
+# Environments
+venv/
+ENV/
+env/
+.venv/
+
+# Databases & Vector Stores
+scholar.db
+faiss_index_db/
+vector_db/
+vector_dbs/
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# OS-specific
+.DS_Store
+Thumbs.db
+
+# Temp / Log files
+*.log
+color_output.txt
+original_index.html
+
+# papers
+paper/

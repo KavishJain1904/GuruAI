@@ -1,0 +1,40 @@
+# Runtime dependencies for GuruAI.
+# Versions are lower-bounded at what this project is developed against and
+# capped below the next major release, so `pip install` stays reproducible
+# without freezing patch upgrades.
+
+# ── Web framework ──
+fastapi>=0.135.1,<1.0
+uvicorn>=0.41.0,<1.0
+python-multipart>=0.0.22,<1.0     # required by FastAPI for multipart file upload
+pydantic>=2.12.4,<3.0             # imported directly for request/response models
+
+# ── LangChain orchestration ──
+langchain>=1.2.11,<2.0
+langchain-core>=1.2.18,<2.0       # imported directly (prompts, documents, messages)
+langchain-community>=0.4.1,<1.0   # TFIDFRetriever integration (sparse half of hybrid retrieval)
+langchain-text-splitters>=1.1.1,<2.0
+scikit-learn>=1.9.0,<2.0           # TFIDFRetriever's actual TF-IDF implementation (langchain-community only wraps it)
+
+# ── Model providers ──
+langchain-google-genai>=4.2.1,<5.0   # Gemini — CRAG relevance grader + hosted embeddings (src/rag/embedder.py)
+langchain-groq>=1.1.2,<2.0           # Llama — answer/quiz chains
+
+# ── Database + vector store (Postgres + pgvector; replaces local SQLite + FAISS) ──
+psycopg2-binary>=2.9.12,<3.0
+pgvector>=0.5.0,<1.0
+
+# ── Document loading ──
+pypdf>=6.8.0,<7.0
+docx2txt>=0.9,<1.0
+
+# ── Config ──
+python-dotenv>=1.1.0,<2.0
+
+# ── Optional ──
+# ddgs powers the CRAG web-search fallback in src/rag/crag.py. That import sits
+# inside a try/except, so without this package the fallback silently returns no
+# results rather than erroring. It is NOT currently installed in this
+# environment — installing it will activate a code path that is presently
+# dormant. Uncomment deliberately.
+# ddgs

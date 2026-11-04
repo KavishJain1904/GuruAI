@@ -1,0 +1,27 @@
+# Keep the build context small and never ship local state or secrets.
+.git/
+.gitignore
+__pycache__/
+*.pyc
+*.pyo
+
+# Local secrets & runtime state — must NOT go into the image.
+.env
+scholar.db
+faiss_index_db/
+vector_db/
+vector_dbs/
+*.log
+
+# Dev-only
+tests/
+scratch/
+docs/
+.claude/
+.streamlit/
+*.md
+!README.md
+
+# OS cruft
+.DS_Store
+Thumbs.db

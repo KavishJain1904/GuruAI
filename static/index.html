@@ -1,0 +1,2417 @@
+<!doctype html>
+<html class="dark" lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>GuruAI</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap"
+        rel="stylesheet" />
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "tertiary-container": "#3fff8b",
+                        "secondary-dim": "#00d4ec",
+                        "on-error-container": "#ffb2b9",
+                        "inverse-surface": "#fcf8fb",
+                        "on-primary-container": "#38005e",
+                        "surface-container-high": "#1f1f22",
+                        "surface-container-low": "#131315",
+                        "on-tertiary": "#006731",
+                        "on-secondary": "#004d57",
+                        "on-primary-fixed-variant": "#450073",
+                        "surface-variant": "#262528",
+                        "tertiary-fixed-dim": "#24f07e",
+                        surface: "#0e0e10",
+                        "surface-container": "#19191c",
+                        "surface-container-highest": "#262528",
+                        "tertiary-dim": "#24f07e",
+                        "primary-container": "#c782ff",
+                        "on-error": "#490013",
+                        "on-primary": "#490078",
+                        "on-tertiary-fixed-variant": "#006832",
+                        "on-primary-fixed": "#000000",
+                        "secondary-fixed": "#26e6ff",
+                        "surface-bright": "#2c2c2f",
+                        secondary: "#00e3fd",
+                        "surface-dim": "#0e0e10",
+                        background: "#0e0e10",
+                        "primary-fixed": "#c782ff",
+                        "primary-dim": "#c57eff",
+                        "on-background": "#f6f3f5",
+                        "on-secondary-fixed-variant": "#005964",
+                        "surface-container-lowest": "#000000",
+                        "secondary-fixed-dim": "#00d7f0",
+                        "inverse-on-surface": "#555557",
+                        "secondary-container": "#006875",
+                        "outline-variant": "#48474a",
+                        "on-tertiary-container": "#005d2c",
+                        error: "#ff6e84",
+                        outline: "#767577",
+                        "on-surface-variant": "#acaaad",
+                        "error-container": "#a70138",
+                        "inverse-primary": "#8534c4",
+                        "on-secondary-fixed": "#003a42",
+                        "primary-fixed-dim": "#bd6efe",
+                        "surface-tint": "#d095ff",
+                        "on-secondary-container": "#e8fbff",
+                        primary: "#d095ff",
+                        "on-tertiary-fixed": "#004820",
+                        "error-dim": "#d73357",
+                        "tertiary-fixed": "#3fff8b",
+                        tertiary: "#b5ffc2",
+                        "on-surface": "#f6f3f5",
+                    },
+                    fontFamily: {
+                        headline: ["Plus Jakarta Sans"],
+                        body: ["Inter"],
+                        label: ["Plus Jakarta Sans"],
+                    },
+                    borderRadius: { DEFAULT: "1rem", lg: "2rem", xl: "3rem", full: "9999px" },
+                },
+            },
+        };
+    </script>
+    <style>
+        /* ── Theme Transition ── */
+        *, *::before, *::after { transition: background-color 0.25s ease, color 0.15s ease, border-color 0.2s ease; }
+
+        .material-symbols-outlined {
+            font-variation-settings: "FILL" 0, "wght" 400, "GRAD" 0, "opsz" 24;
+        }
+
+        /* ── Scrollbar (dark) ── */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #262528; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #48474a; }
+
+        /* ── Scrollbar (light) ── */
+        .light-mode ::-webkit-scrollbar-thumb { background: #d4d0d8; }
+        .light-mode ::-webkit-scrollbar-thumb:hover { background: #b0acb5; }
+
+        /* ── DARK MODE base (default) ── */
+        /* Chat bubbles */
+        .ai-bubble {
+            background: #131315;
+            color: #e8e4ec;
+            padding: 1.25rem 1.5rem;
+            border-radius: 0 1rem 1rem 1rem;
+            border-left: 2px solid rgba(208, 149, 255, 0.2);
+            max-width: 85%;
+            align-self: flex-start;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .user-bubble {
+            background: #1f1f22;
+            color: #e8e4ec;
+            padding: 1rem 1.25rem;
+            border-radius: 1rem 0 1rem 1rem;
+            max-width: 75%;
+            align-self: flex-end;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        .ai-bubble h1, .ai-bubble h2, .ai-bubble h3 {
+            font-weight: 700;
+            margin: 0.75rem 0 0.5rem;
+        }
+        .ai-bubble ul, .ai-bubble ol { padding-left: 1.25rem; margin: 0.5rem 0; }
+        .ai-bubble li { margin: 0.25rem 0; }
+
+        .ai-bubble code {
+            background: #262528;
+            padding: 0.1rem 0.4rem;
+            border-radius: 0.25rem;
+            font-size: 0.85em;
+        }
+        .ai-bubble pre {
+            background: #262528;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
+            margin: 0.5rem 0;
+        }
+        .ai-bubble strong { color: #f6f3f5; }
+
+        /* ── Sources Drawer ──────────────────────────────────────────────── */
+        #sources-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            height: 100vh;
+            width: 380px;
+            max-width: 92vw;
+            background: #0e0e10;
+            border-left: 1px solid rgba(208,149,255,0.15);
+            box-shadow: -12px 0 48px rgba(0,0,0,0.6);
+            transform: translateX(100%);
+            transition: transform 0.32s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        #sources-drawer.open { transform: translateX(0); }
+
+        #sources-drawer-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid rgba(208,149,255,0.1);
+            flex-shrink: 0;
+        }
+        #sources-drawer-header h3 {
+            font-size: 0.8rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: #d095ff;
+        }
+        #sources-drawer-close {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            border: 1px solid rgba(208,149,255,0.2);
+            background: transparent;
+            color: rgba(246,243,245,0.5);
+            cursor: pointer;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 16px;
+            transition: all 0.15s;
+        }
+        #sources-drawer-close:hover { background: rgba(208,149,255,0.1); color: #d095ff; }
+
+        #sources-drawer-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        #sources-drawer-body::-webkit-scrollbar { width: 4px; }
+        #sources-drawer-body::-webkit-scrollbar-thumb { background: rgba(208,149,255,0.2); border-radius: 2px; }
+
+        .source-card {
+            background: #131315;
+            border: 1px solid rgba(208,149,255,0.1);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            transition: border-color 0.15s;
+        }
+        .source-card:hover { border-color: rgba(208,149,255,0.3); }
+        .source-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.65rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.07em;
+            padding: 0.2rem 0.55rem;
+            border-radius: 999px;
+            width: fit-content;
+        }
+        .source-badge.textbook {
+            background: rgba(208,149,255,0.12);
+            color: #c97cff;
+            border: 1px solid rgba(208,149,255,0.25);
+        }
+        .source-badge.web {
+            background: rgba(82,186,255,0.12);
+            color: #52baff;
+            border: 1px solid rgba(82,186,255,0.25);
+        }
+        .source-title {
+            font-size: 0.78rem;
+            font-weight: 600;
+            color: #e8e4ec;
+            line-height: 1.3;
+        }
+        .source-snippet {
+            font-size: 0.73rem;
+            color: rgba(232,228,236,0.5);
+            line-height: 1.5;
+            display: -webkit-box;
+            -webkit-line-clamp: 4;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+        .source-url {
+            font-size: 0.65rem;
+            color: #52baff;
+            text-decoration: none;
+            word-break: break-all;
+        }
+        .source-url:hover { text-decoration: underline; }
+
+        /* Hover button on AI messages */
+        .sources-trigger-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.65rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            padding: 0.25rem 0.65rem 0.25rem 0.45rem;
+            border-radius: 999px;
+            background: rgba(208,149,255,0.07);
+            border: 1px solid rgba(208,149,255,0.18);
+            color: rgba(208,149,255,0.55);
+            cursor: pointer;
+            transition: all 0.18s;
+            margin-top: 0.5rem;
+        }
+        .sources-trigger-btn.active {
+            background: rgba(208,149,255,0.18);
+            border-color: rgba(208,149,255,0.5);
+            color: #d095ff;
+        }
+        .sources-trigger-btn:hover {
+            background: rgba(208,149,255,0.13);
+            border-color: rgba(208,149,255,0.38);
+            color: #d095ff;
+        }
+
+        /* Per-source chips, shown below each AI answer that used retrieved context.
+           Each uploaded document gets a consistent color across the conversation
+           (assigned in JS, cycling through doc-chip-0..4); web/general sources
+           always use the same neutral "web" style since they aren't a session
+           document. Clicking a chip opens the Sources Drawer scoped to it. */
+        .source-chips-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0.4rem;
+            margin-top: 0.6rem;
+        }
+        .doc-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.3rem;
+            font-size: 0.68rem;
+            font-weight: 700;
+            padding: 0.28rem 0.65rem;
+            border-radius: 999px;
+            border: 1px solid transparent;
+            cursor: pointer;
+            transition: all 0.15s;
+            max-width: 220px;
+        }
+        .doc-chip span.chip-label {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        .doc-chip:hover { filter: brightness(1.15); }
+        .doc-chip .material-symbols-outlined { font-size: 12px; flex-shrink: 0; }
+        .doc-chip-0 { background: rgba(208,149,255,0.12); color: #d095ff; border-color: rgba(208,149,255,0.3); }
+        .doc-chip-1 { background: rgba(63,255,139,0.12); color: #3fff8b; border-color: rgba(63,255,139,0.3); }
+        .doc-chip-2 { background: rgba(255,184,77,0.14); color: #ffb84d; border-color: rgba(255,184,77,0.32); }
+        .doc-chip-3 { background: rgba(90,169,255,0.12); color: #5aa9ff; border-color: rgba(90,169,255,0.3); }
+        .doc-chip-4 { background: rgba(56,226,196,0.12); color: #38e2c4; border-color: rgba(56,226,196,0.3); }
+        .doc-chip.web { background: rgba(82,186,255,0.12); color: #52baff; border-color: rgba(82,186,255,0.3); }
+
+        /* Light-mode overrides */
+        html[data-theme="light"] #sources-drawer {
+            background: #f5f3fa;
+            border-left-color: rgba(91,16,184,0.15);
+            box-shadow: -12px 0 48px rgba(0,0,0,0.12);
+        }
+        html[data-theme="light"] #sources-drawer-header { border-bottom-color: rgba(91,16,184,0.12); }
+        html[data-theme="light"] #sources-drawer-header h3 { color: #5b10b8; }
+        html[data-theme="light"] #sources-drawer-close { border-color: rgba(91,16,184,0.2); color: #6b7280; }
+        html[data-theme="light"] #sources-drawer-close:hover { background: rgba(91,16,184,0.08); color: #5b10b8; }
+        html[data-theme="light"] .source-card { background: #ffffff; border-color: rgba(91,16,184,0.1); }
+        html[data-theme="light"] .source-card:hover { border-color: rgba(91,16,184,0.3); }
+        html[data-theme="light"] .source-title { color: #1a1a1a; }
+        html[data-theme="light"] .source-snippet { color: rgba(30,20,50,0.5); }
+        html[data-theme="light"] .source-badge.textbook { background: rgba(91,16,184,0.08); color: #5b10b8; border-color: rgba(91,16,184,0.2); }
+        html[data-theme="light"] .sources-trigger-btn { background: rgba(91,16,184,0.06); border-color: rgba(91,16,184,0.18); color: rgba(91,16,184,0.65); }
+        html[data-theme="light"] .sources-trigger-btn.active,
+        html[data-theme="light"] .sources-trigger-btn:hover { background: rgba(91,16,184,0.12); border-color: rgba(91,16,184,0.4); color: #5b10b8; }
+        html[data-theme="light"] .doc-chip-0 { background: rgba(91,16,184,0.08); color: #5b10b8; border-color: rgba(91,16,184,0.22); }
+        html[data-theme="light"] .doc-chip-1 { background: rgba(0,140,70,0.10); color: #007a3d; border-color: rgba(0,140,70,0.25); }
+        html[data-theme="light"] .doc-chip-2 { background: rgba(180,110,0,0.10); color: #a35a00; border-color: rgba(180,110,0,0.25); }
+        html[data-theme="light"] .doc-chip-3 { background: rgba(20,90,200,0.10); color: #1452c8; border-color: rgba(20,90,200,0.25); }
+        html[data-theme="light"] .doc-chip-4 { background: rgba(0,140,120,0.10); color: #007a68; border-color: rgba(0,140,120,0.25); }
+        html[data-theme="light"] .doc-chip.web { background: rgba(20,90,200,0.08); color: #1452c8; border-color: rgba(20,90,200,0.22); }
+
+        /* Session buttons */
+        .session-btn {
+            width: 100%;
+            text-align: left;
+            padding: 0.5rem 1.5rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: rgba(246, 243, 245, 0.6);
+            transition: all 0.15s;
+            cursor: pointer;
+            background: transparent;
+            border: none;
+            display: block;
+        }
+        .session-btn:hover { background: rgba(31, 31, 34, 0.5); color: #f6f3f5; }
+        .session-btn.active { background: #1f1f22; color: #d095ff; font-weight: 600; }
+
+        /* Quiz styles */
+        .quiz-question {
+            margin-bottom: 1.5rem;
+            padding: 1.25rem;
+            background: #131315;
+            border-radius: 1rem;
+        }
+        .quiz-question p { margin-bottom: 0.75rem; font-size: 0.9rem; color: #f6f3f5; }
+
+        .quiz-option {
+            display: block;
+            width: 100%;
+            text-align: left;
+            padding: 0.6rem 1rem;
+            margin: 0.35rem 0;
+            background: #1f1f22;
+            border: 1px solid #48474a;
+            border-radius: 0.5rem;
+            color: #f6f3f5;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .quiz-option:hover:not(:disabled) { background: #262528; border-color: #d095ff; }
+        .quiz-option.correct { background: rgba(63, 255, 139, 0.15); border-color: #3fff8b; color: #3fff8b; }
+        .quiz-option.wrong { background: rgba(255, 110, 132, 0.15); border-color: #ff6e84; color: #ff6e84; }
+
+        .quiz-explanation {
+            font-size: 0.8rem;
+            color: #acaaad;
+            margin-top: 0.75rem;
+            line-height: 1.5;
+            padding: 0.75rem;
+            background: #262528;
+            border-radius: 0.5rem;
+        }
+
+        /* ══════════════════════════════════════════════════════════
+           LIGHT MODE  —  Complete Theme
+        ══════════════════════════════════════════════════════════ */
+
+        /* 1. Color-scheme so native form controls go light */
+        html[data-theme="light"] { color-scheme: light; }
+
+        /* 2. Root backgrounds & text */
+        html[data-theme="light"],
+        html[data-theme="light"] body {
+            background-color: #f0ecf8 !important;
+            color: #1a1126 !important;
+        }
+
+        /* 3. Left sidebar (hardcoded bg-[#131315] → overridden via JS inline style too) */
+        html[data-theme="light"] aside:first-of-type {
+            background-color: #e8e0f5 !important;
+            border-right: 1px solid #cfc4e8 !important;
+        }
+        /* All text nodes inside left sidebar */
+        html[data-theme="light"] aside:first-of-type * {
+            color: #2d2140 !important;
+        }
+        /* Muted secondary sidebar text */
+        html[data-theme="light"] aside:first-of-type .text-xs,
+        html[data-theme="light"] aside:first-of-type p {
+            color: #6a5a8a !important;
+        }
+        /* Active nav pill */
+        html[data-theme="light"] #nav-study,
+        html[data-theme="light"] #nav-memory {
+            background-color: #d8ccf2 !important;
+            color: #5b10b8 !important;
+        }
+        html[data-theme="light"] #nav-study *,
+        html[data-theme="light"] #nav-memory * {
+            color: #5b10b8 !important;
+        }
+        /* Delete session button */
+        html[data-theme="light"] #delete-session-btn button {
+            color: #c0364a !important;
+        }
+        /* Session list */
+        html[data-theme="light"] .session-btn {
+            color: #5a4a7a !important;
+            background: transparent !important;
+        }
+        html[data-theme="light"] .session-btn:hover {
+            background: rgba(90,50,160,0.09) !important;
+            color: #1a1126 !important;
+        }
+        html[data-theme="light"] .session-btn.active {
+            background: #d8ccf2 !important;
+            color: #5b10b8 !important;
+            font-weight: 700 !important;
+        }
+        /* Level badge & user info */
+        html[data-theme="light"] aside:first-of-type .text-\[\#d095ff\] {
+            color: #7020c8 !important;
+        }
+        /* New Session button — keep gradient, just ensure text is white */
+        html[data-theme="light"] aside:first-of-type button[onclick="newSession()"] {
+            color: #ffffff !important;
+        }
+
+        /* ── Sidebar nav hover states (override Tailwind hover: utilities) ── */
+        /* Active nav pill: Study Session (always #nav-study) */
+        html[data-theme="light"] body #nav-study {
+            background: #d8ccf2 !important;
+            color: #5b10b8 !important;
+        }
+        html[data-theme="light"] body #nav-study:hover {
+            background: #c4b4e8 !important;
+            color: #3a009a !important;
+            transform: translateX(3px);
+            box-shadow: 0 3px 14px rgba(80,0,160,0.14) !important;
+        }
+        html[data-theme="light"] body #nav-study * { color: #5b10b8 !important; }
+        html[data-theme="light"] body #nav-study:hover * { color: #3a009a !important; }
+
+        /* Knowledge Base link & My Memory nav — inactive state */
+        html[data-theme="light"] body aside nav a,
+        html[data-theme="light"] body #nav-memory {
+            color: #5a4a7a !important;
+            background: transparent !important;
+        }
+        html[data-theme="light"] body aside nav a *,
+        html[data-theme="light"] body #nav-memory * {
+            color: #5a4a7a !important;
+        }
+        /* HOVER — the key fix */
+        html[data-theme="light"] body aside nav a:hover,
+        html[data-theme="light"] body #nav-memory:hover {
+            background: rgba(90,40,180,0.12) !important;
+            color: #2d1a50 !important;
+            transform: translateX(3px);
+        }
+        html[data-theme="light"] body aside nav a:hover *,
+        html[data-theme="light"] body #nav-memory:hover * {
+            color: #2d1a50 !important;
+        }
+
+        /* When nav-memory becomes active (gets bg-[#1f1f22] class via JS) */
+        html[data-theme="light"] body #nav-memory[style*="background"] {
+            color: #5b10b8 !important;
+        }
+
+        /* Bottom user profile tile hover */
+        html[data-theme="light"] body aside [class*="hover:bg-[#1f1f22]"]:hover {
+            background: rgba(90,40,180,0.10) !important;
+        }
+
+        /* Delete session button hover */
+        html[data-theme="light"] body #delete-session-btn button:hover {
+            background: rgba(192,54,74,0.10) !important;
+            color: #c0364a !important;
+        }
+
+        /* 4. Header */
+        html[data-theme="light"] header {
+            background: rgba(232, 224, 245, 0.96) !important;
+            box-shadow: 0 2px 20px rgba(80,40,140,0.10) !important;
+        }
+        html[data-theme="light"] header * {
+            color: #3a2860 !important;
+        }
+        html[data-theme="light"] header input {
+            background: #d8ccf2 !important;
+            color: #1a1126 !important;
+        }
+        html[data-theme="light"] header input::placeholder {
+            color: #7a6a9a !important;
+        }
+        /* Keep the brand gradient text */
+        html[data-theme="light"] header .bg-clip-text {
+            -webkit-text-fill-color: transparent !important;
+            background: linear-gradient(135deg, #8b2ff8, #6a10e0) !important;
+            -webkit-background-clip: text !important;
+            background-clip: text !important;
+            color: transparent !important;
+        }
+
+        /* 5. Main content + scroll area */
+        html[data-theme="light"] main,
+        html[data-theme="light"] #scroll-area,
+        html[data-theme="light"] #study-view,
+        html[data-theme="light"] #chat-feed {
+            background: #f0ecf8 !important;
+        }
+
+        /* 6. Surface container utility classes */
+        html[data-theme="light"] [class*="bg-surface-container-highest"] { background: #d8ccf2 !important; color: #1a1126 !important; }
+        html[data-theme="light"] [class*="bg-surface-container-high"]    { background: #e2d8f7 !important; color: #1a1126 !important; }
+        html[data-theme="light"] [class*="bg-surface-container-low"]     { background: #e8e2fb !important; color: #1a1126 !important; }
+        html[data-theme="light"] [class*="bg-surface-container-lowest"]  { background: #d8ccf2 !important; color: #1a1126 !important; }
+        html[data-theme="light"] [class*="bg-surface-bright"]            { background: #ddd4f5 !important; }
+
+        /* 7. Chat input box */
+        html[data-theme="light"] #chat-feed + div,
+        html[data-theme="light"] .p-8 { background: #f0ecf8 !important; }
+        html[data-theme="light"] [class*="bg-surface-container-high"].rounded-2xl {
+            background: #e2d8f7 !important;
+            box-shadow: 0 4px 24px rgba(80,40,140,0.10) !important;
+        }
+        html[data-theme="light"] #chat-input,
+        html[data-theme="light"] #memory-chat-input {
+            color: #1a1126 !important;
+            caret-color: #7020c8 !important;
+        }
+        html[data-theme="light"] #chat-input::placeholder,
+        html[data-theme="light"] #memory-chat-input::placeholder {
+            color: #8878a8 !important;
+        }
+
+        /* 8. AI & user chat bubbles */
+        html[data-theme="light"] .ai-bubble {
+            background: #ffffff !important;
+            color: #1a1126 !important;
+            border-left: 2px solid rgba(100,30,200,0.30) !important;
+            box-shadow: 0 2px 14px rgba(80,40,140,0.08) !important;
+        }
+        /* Force every descendant to dark text */
+        html[data-theme="light"] .ai-bubble,
+        html[data-theme="light"] .ai-bubble p,
+        html[data-theme="light"] .ai-bubble span,
+        html[data-theme="light"] .ai-bubble li,
+        html[data-theme="light"] .ai-bubble ul,
+        html[data-theme="light"] .ai-bubble ol,
+        html[data-theme="light"] .ai-bubble h1,
+        html[data-theme="light"] .ai-bubble h2,
+        html[data-theme="light"] .ai-bubble h3,
+        html[data-theme="light"] .ai-bubble h4,
+        html[data-theme="light"] .ai-bubble em,
+        html[data-theme="light"] .ai-bubble blockquote,
+        html[data-theme="light"] .ai-bubble td,
+        html[data-theme="light"] .ai-bubble th {
+            color: #1a1126 !important;
+        }
+        html[data-theme="light"] .ai-bubble strong {
+            color: #3a006a !important;
+            font-weight: 700 !important;
+        }
+        html[data-theme="light"] .ai-bubble a {
+            color: #6010b8 !important;
+            text-decoration: underline !important;
+        }
+        html[data-theme="light"] .ai-bubble code {
+            background: #ebe4fa !important;
+            color: #4a009a !important;
+        }
+        html[data-theme="light"] .ai-bubble pre {
+            background: #ebe4fa !important;
+            color: #1a1126 !important;
+        }
+        html[data-theme="light"] .ai-bubble pre code {
+            color: #4a009a !important;
+        }
+        html[data-theme="light"] .user-bubble {
+            background: #d8ccf2 !important;
+            color: #1a1126 !important;
+        }
+        html[data-theme="light"] .user-bubble p,
+        html[data-theme="light"] .user-bubble span {
+            color: #1a1126 !important;
+        }
+
+        /* 9. Right sidebar */
+        html[data-theme="light"] aside:last-of-type {
+            background: #e8e0f5 !important;
+            border-left: 1px solid #cfc4e8 !important;
+        }
+        html[data-theme="light"] aside:last-of-type * {
+            color: #2d2140 !important;
+        }
+        html[data-theme="light"] aside:last-of-type h2,
+        html[data-theme="light"] aside:last-of-type h3 {
+            color: #1a1126 !important;
+        }
+        html[data-theme="light"] aside:last-of-type .text-xs.text-on-surface-variant {
+            color: #6a5a8a !important;
+        }
+        html[data-theme="light"] #active-documents-list .p-4 {
+            background: #ddd4f5 !important;
+        }
+        html[data-theme="light"] #active-documents-list .p-4 * {
+            color: #2d2140 !important;
+        }
+        /* Drop area */
+        html[data-theme="light"] .border-dashed {
+            border-color: #b8aad8 !important;
+        }
+        html[data-theme="light"] .border-dashed * {
+            color: #6a5a8a !important;
+        }
+
+        /* 10. Quiz */
+        html[data-theme="light"] .quiz-question {
+            background: #ffffff !important;
+            box-shadow: 0 2px 10px rgba(80,40,140,0.08) !important;
+        }
+        html[data-theme="light"] .quiz-question p,
+        html[data-theme="light"] .quiz-question strong,
+        html[data-theme="light"] .quiz-question em {
+            color: #1a1126 !important;
+        }
+        html[data-theme="light"] .quiz-option {
+            background: #ede8fb !important;
+            border-color: #c4b8e0 !important;
+            color: #1a1126 !important;
+        }
+        html[data-theme="light"] .quiz-option:hover:not(:disabled) {
+            background: #ddd4f5 !important;
+            border-color: #7020c8 !important;
+        }
+        html[data-theme="light"] .quiz-explanation {
+            background: #e8e2fb !important;
+            color: #4a3a6a !important;
+        }
+        html[data-theme="light"] .quiz-option.correct { 
+            background: #dcfce7 !important; /* Light green background */
+            border-color: #16a34a !important; /* Vibrant green border */
+            color: #166534 !important;      /* Dark green text for readability */
+            font-weight: 600 !important;
+        }
+        /* Quiz card header */
+        html[data-theme="light"] .quiz-feed-card [class*="bg-surface-container-high"] {
+            background: #e2d8f7 !important;
+        }
+        html[data-theme="light"] .quiz-feed-card * { color: #1a1126 !important; }
+
+        /* 11. Memory view — all sub-sections */
+        html[data-theme="light"] #memory-view { background: #f0ecf8 !important; }
+        html[data-theme="light"] #memory-view > div:first-child {
+            background: rgba(232,224,245,0.97) !important;
+            border-bottom-color: #cfc4e8 !important;
+        }
+        html[data-theme="light"] #memory-view > div:first-child * { color: #2d2140 !important; }
+        /* MY SUBJECTS section */
+        html[data-theme="light"] #memory-view [class*="bg-surface-container-low"] {
+            background: #e8e2fb !important;
+            border-bottom-color: #cfc4e8 !important;
+        }
+        html[data-theme="light"] #memory-view [class*="bg-surface-container-low"] * { color: #1a1126 !important; }
+        /* Subject input */
+        html[data-theme="light"] #subject-input {
+            background: #ddd4f5 !important;
+            color: #1a1126 !important;
+            border-color: #cfc4e8 !important;
+        }
+        html[data-theme="light"] #subject-input::placeholder { color: #8878a8 !important; }
+        /* Add subject button */
+        html[data-theme="light"] #memory-view button[onclick="addSubject()"] {
+            background: rgba(112,32,200,0.12) !important;
+            color: #7020c8 !important;
+        }
+        html[data-theme="light"] #memory-view button[onclick="addSubject()"]:hover {
+            background: rgba(112,32,200,0.22) !important;
+        }
+        /* Subject chips */
+        html[data-theme="light"] #subjects-chips > span,
+        html[data-theme="light"] #subjects-chips > div {
+            background: rgba(112,32,200,0.10) !important;
+            color: #5b10b8 !important;
+            border-color: rgba(112,32,200,0.25) !important;
+        }
+        /* Memory chips */
+        html[data-theme="light"] #memory-chips-view > div {
+            background: rgba(112,32,200,0.08) !important;
+            color: #1a1126 !important;
+            border-color: rgba(112,32,200,0.20) !important;
+        }
+        html[data-theme="light"] #memory-chips-view span { color: #1a1126 !important; }
+        /* Chat feed and bubbles */
+        html[data-theme="light"] #memory-chat-feed { background: #f0ecf8 !important; }
+        /* Input area */
+        html[data-theme="light"] #memory-chat-input { color: #1a1126 !important; caret-color: #7020c8 !important; }
+        html[data-theme="light"] #memory-chat-input::placeholder { color: #8878a8 !important; }
+        /* Clear memory button */
+        html[data-theme="light"] button[onclick="clearAllMemory()"] { color: #c0364a !important; }
+        html[data-theme="light"] button[onclick="clearAllMemory()"]:hover {
+            background: rgba(192,54,74,0.10) !important; color: #c0364a !important;
+        }
+
+        /* 12. DB status pill (bottom of chat input) */
+        html[data-theme="light"] [class*="bg-surface-bright"] {
+            background: #ddd4f5 !important;
+        }
+        html[data-theme="light"] [class*="text-on-surface\/60"] {
+            color: #6a5a8a !important;
+        }
+
+        /* 13. Follow-up question chips */
+        html[data-theme="light"] .ai-bubble ~ div button {
+            color: #6010b8 !important;
+            border-color: rgba(96,16,184,0.30) !important;
+        }
+        html[data-theme="light"] .ai-bubble ~ div button:hover {
+            background: rgba(96,16,184,0.07) !important;
+        }
+
+        /* ════════════════════════════════════════
+           THEME TOGGLE BUTTON — icon only
+        ════════════════════════════════════════ */
+        #theme-toggle {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 2px solid rgba(208,149,255,0.40);
+            background: rgba(208,149,255,0.10);
+            color: #c57eff;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.22s ease;
+            flex-shrink: 0;
+        }
+        #theme-toggle:hover {
+            background: rgba(208,149,255,0.22);
+            border-color: #d095ff;
+            color: #e0b0ff;
+            transform: rotate(15deg) scale(1.08);
+            box-shadow: 0 0 14px rgba(208,149,255,0.35);
+        }
+        #theme-toggle .material-symbols-outlined {
+            font-size: 20px;
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        html[data-theme="light"] #theme-toggle {
+            border-color: rgba(100,30,200,0.30);
+            background: rgba(100,30,200,0.08);
+            color: #6010b8;
+        }
+        html[data-theme="light"] #theme-toggle:hover {
+            background: rgba(100,30,200,0.16);
+            border-color: #7020c8;
+            color: #5000a0;
+            box-shadow: 0 0 14px rgba(100,30,200,0.25);
+        }
+    </style>
+<script>
+    // Migrate old 'theme' key → 'scholar-theme'
+    (function(){
+        const old = localStorage.getItem('theme');
+        if (old && !localStorage.getItem('scholar-theme')) {
+            localStorage.setItem('scholar-theme', old);
+        }
+        if (localStorage.getItem('scholar-theme') === 'light') {
+            document.documentElement.setAttribute('data-theme', 'light');
+        }
+    })();
+</script>
+</head>
+
+<body class="bg-background text-on-surface font-body overflow-hidden">
+    <div class="flex h-screen w-full">
+
+        <aside
+            class="bg-[#131315] font-['Plus_Jakarta_Sans'] antialiased h-screen w-64 fixed left-0 top-0 flex flex-col py-6 z-40">
+            <div class="px-6 mb-8 flex items-center gap-3">
+                <div
+                    class="w-8 h-8 rounded-lg bg-gradient-to-br from-[#d095ff] to-[#c782ff] flex items-center justify-center shadow-lg shadow-[#d095ff]/20">
+                    <span class="material-symbols-outlined text-on-primary-fixed text-sm"
+                        style="font-variation-settings:'FILL' 1">auto_stories</span>
+                </div>
+                <h1 id="sidebar-app-title" class="text-xl font-bold tracking-tight text-[#f6f3f5]">The Scholar</h1>
+            </div>
+
+            <div class="px-4 mb-8">
+                <button onclick="newSession()"
+                    class="w-full bg-gradient-to-br from-[#d095ff] to-[#c782ff] text-on-primary-fixed font-bold py-3 px-4 rounded-xl flex items-center justify-center gap-2 active:scale-[0.98] transition-transform shadow-lg shadow-[#d095ff]/10">
+                    <span class="material-symbols-outlined text-[20px]"
+                        style="font-variation-settings:'FILL' 1">add_circle</span>
+                    New Session
+                </button>
+            </div>
+
+            <nav class="flex-1 space-y-1 px-2 overflow-y-auto">
+                <div id="nav-study"
+                    class="bg-[#1f1f22] text-[#d095ff] rounded-xl mx-2 px-4 py-3 font-semibold flex items-center gap-3 cursor-pointer text-sm"
+                    onclick="switchView('study')">
+                    <span class="material-symbols-outlined" style="font-variation-settings:'FILL' 1">chat</span>
+                    Study Session
+                </div>
+                <a href="/knowledge.html"
+                    class="text-[#f6f3f5]/60 hover:text-[#f6f3f5] px-4 py-3 transition-colors hover:bg-[#1f1f22]/50 rounded-xl mx-2 flex items-center gap-3 cursor-pointer text-sm font-medium">
+                    <span class="material-symbols-outlined">hub</span>
+                    Knowledge Base
+                </a>
+                <div id="nav-memory"
+                    class="text-[#f6f3f5]/60 hover:text-[#f6f3f5] px-4 py-3 transition-colors hover:bg-[#1f1f22]/50 rounded-xl mx-2 flex items-center gap-3 cursor-pointer text-sm font-medium"
+                    onclick="switchView('memory')">
+                    <span class="material-symbols-outlined">psychology</span>
+                    My Memory
+                </div>
+                <div id="nav-progress"
+                    class="text-[#f6f3f5]/60 hover:text-[#f6f3f5] px-4 py-3 transition-colors hover:bg-[#1f1f22]/50 rounded-xl mx-2 flex items-center gap-3 cursor-pointer text-sm font-medium"
+                    onclick="switchView('progress')">
+                    <span class="material-symbols-outlined">trending_up</span>
+                    Review &amp; Progress
+                </div>
+
+                <div class="pt-6 pb-2 px-6">
+                    <p class="text-[10px] uppercase tracking-widest text-[#f6f3f5]/40 font-bold">Past Sessions</p>
+                </div>
+                <div id="session-list" class="space-y-1"></div>
+
+                <div class="px-4 pt-4" id="delete-session-btn">
+                    <button onclick="deleteSession()"
+                        class="w-full text-xs text-error/60 hover:text-error px-3 py-2 rounded-lg hover:bg-error/10 transition-colors flex items-center gap-2">
+                        <span class="material-symbols-outlined text-[16px]">delete</span>
+                        Delete Active Chat
+                    </button>
+                </div>
+            </nav>
+
+            <div class="mt-auto px-4 pt-4 space-y-2">
+                <div onclick="window.location.href='/user.html'"
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-[#1f1f22]/50 transition-colors cursor-pointer">
+                    <div class="w-10 h-10 rounded-full overflow-hidden border border-outline-variant/30">
+                        <img alt="User profile avatar" class="w-full h-full object-cover"
+                            src="https://lh3.googleusercontent.com/aida-public/AB6AXuD8FTVxMxdbx6PJwCCHMcqTv6AXE94gC9SL37mcBOzCXXv6U2ihHSKPKZITwrn_TtjN76-w7lqZiOEV1AqRrMpl4dNw79FZkSznR4Qcw6VH3hZmX7qO6BJpoCC375DOSLxqoMyFAuv1eoKlidt3mBAgwOkZy8a9sb7apll5jw8gOwrOujf-DOhUj2fTIYMcX-tpGjCpDPs4iuWXwWxCi8p5j4QLcJjp1f5X9eELMSVtd6z1_OewXnJZGWfFeVrF0FyuXnjx3EGZYazx" />
+                    </div>
+                    <div>
+                        <p id="sidebar-user-name" class="text-sm font-bold text-[#f6f3f5]">The Scholar</p>
+                    </div>
+                </div>
+                <div onclick="logout()"
+                    class="flex items-center gap-3 text-red-400 hover:text-red-300 hover:bg-red-500/10 px-4 py-2 transition-colors cursor-pointer text-sm rounded-xl">
+                    <span class="material-symbols-outlined text-[18px]">logout</span>
+                    Logout
+                </div>
+            </div>
+        </aside>
+
+        <main class="flex-1 ml-64 flex flex-col relative bg-surface overflow-hidden">
+
+            <!-- ── Memory Chat View (hidden by default) ── -->
+            <div id="memory-view" class="hidden flex-col h-full">
+                <div class="bg-[#0e0e10]/80 backdrop-blur-xl w-full h-16 flex items-center gap-4 px-8 border-b border-outline-variant/10 flex-shrink-0">
+                    <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">psychology</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-sm text-on-surface">My Memory</p>
+                        <p class="text-[10px] text-on-surface-variant">Tell me about yourself — I'll remember it forever</p>
+                    </div>
+                    <div class="ml-auto">
+                        <button onclick="clearAllMemory()" class="text-xs text-error/50 hover:text-error px-3 py-1.5 rounded-lg hover:bg-error/10 transition-colors flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-[14px]">delete_sweep</span>
+                            Clear all memory
+                        </button>
+                    </div>
+                </div>
+
+                <!-- My Subjects section -->
+                <div class="px-6 py-4 border-b border-outline-variant/10 bg-surface-container-low flex-shrink-0">
+                    <div class="flex items-center justify-between mb-3">
+                        <div>
+                            <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">My Subjects</p>
+                            <p class="text-[10px] text-on-surface-variant/50 mt-0.5">Quizzes & topics will be categorized under these subjects only</p>
+                        </div>
+                    </div>
+                    <!-- Subject chips -->
+                    <div id="subjects-chips" class="flex flex-wrap gap-2 mb-3 min-h-[28px]"></div>
+                    <!-- Add subject input -->
+                    <div class="flex gap-2">
+                        <input id="subject-input" type="text"
+                            class="flex-1 bg-surface-container-highest border border-outline-variant/30 rounded-full px-4 py-1.5 text-sm text-on-surface placeholder:text-on-surface-variant/40 focus:outline-none focus:ring-1 focus:ring-primary/40"
+                            placeholder="e.g. Machine Learning, Data Structures..."
+                            onkeydown="if(event.key==='Enter'){addSubject();}" />
+                        <button onclick="addSubject()"
+                            class="px-4 py-1.5 rounded-full bg-primary/15 text-primary text-xs font-bold hover:bg-primary/25 transition-colors flex items-center gap-1">
+                            <span class="material-symbols-outlined text-[14px]">add</span>Add
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stored memory chips bar -->
+                <div class="px-6 py-3 border-b border-outline-variant/10 bg-surface-container-low flex-shrink-0">
+                    <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant mb-2">Stored Preferences</p>
+                    <div id="memory-chips-view" class="flex flex-wrap gap-2 min-h-[28px]"></div>
+                </div>
+
+                <!-- Chat feed -->
+                <div id="memory-chat-feed" class="flex-1 overflow-y-auto px-8 py-8 flex flex-col gap-5 max-w-3xl mx-auto w-full"></div>
+
+                <!-- Input -->
+                <div class="p-6 flex-shrink-0">
+                    <div class="max-w-3xl mx-auto">
+                        <div class="bg-surface-container-high rounded-2xl p-4 flex gap-3 items-end shadow-2xl focus-within:ring-1 focus-within:ring-primary/30 transition-all">
+                            <textarea id="memory-chat-input"
+                                class="flex-1 bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant/40 resize-none font-body text-sm"
+                                rows="2"
+                                placeholder="Tell me about yourself — preferences, background, how you like to learn..."
+                                onkeydown="if(event.key==='Enter' && !event.shiftKey){event.preventDefault(); sendMemoryMessage();}"></textarea>
+                            <button onclick="sendMemoryMessage()" id="memory-chat-send"
+                                class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary-fixed shadow-lg shadow-primary/20 active:scale-90 transition-transform flex-shrink-0">
+                                <span class="material-symbols-outlined">send</span>
+                            </button>
+                        </div>
+                        <p class="text-[10px] text-on-surface-variant/40 text-center mt-2">Your preferences apply to all study sessions automatically</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ── Review & Progress View (hidden by default) ── -->
+            <div id="progress-view" class="hidden flex-col h-full">
+                <div class="bg-[#0e0e10]/80 backdrop-blur-xl w-full h-16 flex items-center gap-4 px-8 border-b border-outline-variant/10 flex-shrink-0">
+                    <div class="w-9 h-9 rounded-xl bg-primary/10 flex items-center justify-center">
+                        <span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings:'FILL' 1">trending_up</span>
+                    </div>
+                    <div>
+                        <p class="font-bold text-sm text-on-surface">Review &amp; Progress</p>
+                        <p class="text-[10px] text-on-surface-variant">Your spaced-repetition schedule and mastery stats</p>
+                    </div>
+                </div>
+                <div class="flex-1 overflow-y-auto px-8 py-6">
+                    <div id="srs-stats-container" class="mb-6"></div>
+                    <div id="review-queue-container" class="mb-6"></div>
+                    <div id="review-history-container" class="mb-6"></div>
+                </div>
+            </div>
+
+            <!-- ── Study Session View ── -->
+            <div id="study-view" class="flex flex-col h-full">
+            <header
+                class="bg-[#0e0e10]/80 backdrop-blur-xl w-full h-16 sticky top-0 z-50 flex justify-between items-center px-8 shadow-[0_20px_40px_rgba(0,0,0,0.4)]">
+                <div class="flex items-center gap-8">
+                    <span
+                        class="text-lg font-black bg-gradient-to-br from-[#d095ff] to-[#c782ff] bg-clip-text text-transparent">GuruAI</span>
+                   
+                </div>
+                <div class="flex items-center gap-4">
+                    <div class="relative flex items-center">
+                        <span
+                            class="material-symbols-outlined absolute left-3 text-on-surface-variant text-[20px]">search</span>
+                        <input
+                            class="bg-surface-container-lowest border-none rounded-full pl-10 pr-4 py-1.5 text-sm w-64 focus:ring-1 focus:ring-secondary/40 placeholder:text-on-surface-variant/50"
+                            placeholder="Search knowledge..." type="text" />
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button id="theme-toggle" onclick="toggleTheme()" title="Toggle light / dark mode" aria-label="Toggle theme">
+                            <span id="theme-icon" class="material-symbols-outlined">dark_mode</span>
+                        </button>
+                    </div>
+                </div>
+            </header>
+
+            <div id="scroll-area" class="flex-1 overflow-y-auto w-full">
+                <div id="chat-feed" class="px-8 py-12 flex flex-col gap-6 max-w-4xl mx-auto w-full">
+                </div>
+            </div>
+            <div class="p-8 pt-0">
+                <div class="max-w-4xl mx-auto relative">
+                    <div
+                        class="bg-surface-container-high rounded-2xl shadow-2xl p-4 flex flex-col gap-3 group focus-within:ring-1 focus-within:ring-primary/30 transition-all">
+                        <textarea id="chat-input"
+                            class="bg-transparent border-none focus:ring-0 text-on-surface placeholder:text-on-surface-variant/40 resize-none h-20 w-full font-body text-base"
+                            placeholder="Ask your scholar anything..."></textarea>
+                        <div class="flex justify-between items-center">
+                            <div class="flex gap-2">
+                                <label
+                                    class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-container-highest text-xs font-semibold text-on-surface/70 hover:bg-surface-bright transition-colors cursor-pointer">
+                                    <span class="material-symbols-outlined text-[16px]">attach_file</span>
+                                    Add context
+                                    <input id="file-input" type="file" accept=".pdf,.txt,.docx" multiple class="hidden"
+                                        title="You can select multiple PDF, DOCX or TXT files at once"
+                                        onchange="uploadAndBuild()" />
+                                </label>
+                                <button onclick="generateQuiz()"
+                                    class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-secondary/10 text-secondary text-xs font-bold hover:bg-secondary/20 transition-colors">
+                                    <span class="material-symbols-outlined text-[16px]">quiz</span>
+                                    Generate Quiz
+                                </button>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <button id="stop-btn" onclick="stopResponse()"
+                                    class="hidden w-10 h-10 rounded-full bg-error/20 text-error flex items-center justify-center hover:bg-error/30 active:scale-90 transition-all"
+                                    title="Stop response">
+                                    <span class="material-symbols-outlined text-[20px]">stop_circle</span>
+                                </button>
+                                <button id="send-btn" onclick="sendMessage()"
+                                    class="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary-fixed shadow-lg shadow-primary/20 active:scale-90 transition-transform">
+                                    <span class="material-symbols-outlined">send</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="absolute -top-4 left-1/2 -translate-x-1/2">
+                        <div
+                            class="px-4 py-1 rounded-full bg-surface-bright/40 backdrop-blur-md border border-outline-variant/20 flex items-center gap-2">
+                            <div class="w-1.5 h-1.5 rounded-full bg-tertiary animate-pulse shadow-[0_0_8px_#3fff8b]">
+                            </div>
+                            <span id="db-status" class="text-[10px] font-bold text-on-surface/60 uppercase">Checking
+                                database...</span>
+                        </div>
+                    </div>
+                </div>
+            </div><!-- /study-view -->
+        </main>
+
+        <aside
+            class="w-80 h-screen bg-surface-container-low border-l border-outline-variant/5 flex flex-col p-6 overflow-y-auto z-40">
+            <h2 class="font-headline font-extrabold text-xl mb-6">Knowledge Hub</h2>
+
+            <section class="mb-8">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Active Documents
+                    </h3>
+                    <div class="flex items-center gap-2">
+                        <span id="doc-count-badge"
+                            class="text-[10px] font-bold text-primary px-2 py-0.5 rounded bg-primary/10">0/10</span>
+                        <button id="clear-kb-btn" onclick="clearKnowledgeBase()" title="Clear Knowledge Base"
+                            class="hidden text-error/50 hover:text-error transition-colors p-0.5 rounded hover:bg-error/10">
+                            <span class="material-symbols-outlined text-[16px]">delete_sweep</span>
+                        </button>
+                    </div>
+                </div>
+                <div id="upload-progress-list" class="space-y-2 mb-3 hidden">
+                </div>
+                <div id="active-documents-list" class="space-y-3">
+                </div>
+                <div id="doc-drop-zone"
+                    class="mt-4 p-6 rounded-2xl border border-dashed border-outline-variant/30 flex flex-col items-center justify-center text-center gap-2 cursor-pointer hover:bg-surface-container-high/50 transition-colors"
+                    onclick="document.getElementById('file-input').click()">
+                    <div
+                        class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center text-on-surface-variant">
+                        <span class="material-symbols-outlined">upload_file</span>
+                    </div>
+                    <div>
+                        <p class="text-sm font-bold text-on-surface/80">Drop documents here</p>
+                        <p class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest mt-1">PDF,
+                            DOCX, TXT &middot; multiple allowed</p>
+                    </div>
+                </div>
+            </section>
+
+            <section class="flex-1 flex flex-col min-h-0">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Knowledge Profile</h3>
+                    <a href="/knowledge.html" class="text-[10px] text-primary font-bold hover:underline">View All →</a>
+                </div>
+                <div id="knowledge-profile" class="space-y-4 flex-1 overflow-y-auto pr-1">
+                    <p class="text-xs text-on-surface-variant opacity-50">Complete quizzes to build your profile.</p>
+                </div>
+            </section>
+
+            <section class="mt-6 pt-6 border-t border-outline-variant/10">
+                <div class="flex items-center justify-between mb-3">
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">My Memory</h3>
+                    <button onclick="switchView('memory')" class="text-[10px] text-primary font-bold hover:underline">Edit →</button>
+                </div>
+                <div id="sidebar-memory-list" class="space-y-1.5">
+                    <p class="text-xs text-on-surface-variant opacity-40 italic">No preferences saved yet.</p>
+                </div>
+            </section>
+        </aside>
+    </div>
+
+    <!-- Spaced Repetition (SRS) widgets -->
+    <script src="/static/widgets/review-queue.js"></script>
+    <script src="/static/widgets/study-tracker.js"></script>
+    <script src="/static/widgets/srs-stats.js"></script>
+    <script src="/static/widgets/review-history.js"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const API = "";
+            let activeSessionId = null;
+
+            async function init() {
+                const sessions = await fetch(`${API}/api/sessions`).then((r) => r.json());
+                const ids = Object.keys(sessions);
+                if (ids.length === 0) {
+                    const res = await fetch(`${API}/api/sessions`, { method: "POST" }).then((r) => r.json());
+                    activeSessionId = res.session_id;
+                    localStorage.setItem("lastSessionId", activeSessionId);
+                } else {
+                    const rememberedSessionId = localStorage.getItem("lastSessionId");
+                    activeSessionId = ids.includes(rememberedSessionId) ? rememberedSessionId : ids[0];
+                    localStorage.setItem("lastSessionId", activeSessionId);
+                }
+                renderSessions(sessions);
+                loadMessages(activeSessionId);
+                loadProfile();
+                loadSidebarMemory();
+                checkDbStatus(activeSessionId);
+                loadDocuments(activeSessionId);
+                loadSubjects();
+                loadUserName();
+                setupDocDropZone();
+            }
+
+            async function loadUserName() {
+                try {
+                    const profile = await fetch(`${API}/api/user/profile`).then(r => r.json());
+                    const name = profile.name || 'The Scholar';
+                    const titleEl = document.getElementById('sidebar-app-title');
+                    const nameEl  = document.getElementById('sidebar-user-name');
+                    if (titleEl) titleEl.textContent = name;
+                    if (nameEl)  nameEl.textContent  = name;
+                } catch (e) { /* silently ignore — defaults stay */ }
+            }
+
+            function renderSessions(sessions) {
+                const list = document.getElementById("session-list");
+                if (!list) return;
+                list.innerHTML = "";
+                Object.entries(sessions).reverse().forEach(([id, data]) => {
+                    const btn = document.createElement("button");
+                    btn.className = "session-btn" + (id === activeSessionId ? " active" : "");
+                    btn.textContent = data.title;
+                    btn.onclick = () => switchSession(id);
+                    list.appendChild(btn);
+                });
+            }
+
+            window.newSession = async function () {
+                window.switchView('study');
+                const res = await fetch(`${API}/api/sessions`, { method: "POST" }).then((r) => r.json());
+                activeSessionId = res.session_id;
+                localStorage.setItem("lastSessionId", activeSessionId);
+                const sessions = await fetch(`${API}/api/sessions`).then((r) => r.json());
+                renderSessions(sessions);
+                document.getElementById("chat-feed").innerHTML = "";
+                checkDbStatus(activeSessionId);
+                loadDocuments(activeSessionId); // Reset docs for new session
+            };
+
+            async function switchSession(id) {
+                window.switchView('study');
+                activeSessionId = id;
+                localStorage.setItem("lastSessionId", id);
+                const sessions = await fetch(`${API}/api/sessions`).then((r) => r.json());
+                renderSessions(sessions);
+                loadMessages(id);
+                checkDbStatus(id);
+                loadDocuments(id);
+            }
+
+            window.deleteSession = async function () {
+                if (!activeSessionId) return;
+                await fetch(`${API}/api/sessions/${activeSessionId}`, { method: "DELETE" });
+                activeSessionId = null;
+                await init();
+            };
+
+            async function loadMessages(sessionId) {
+                const msgs = await fetch(`${API}/api/sessions/${sessionId}/messages`).then((r) => r.json());
+                const feed = document.getElementById("chat-feed");
+                if (!feed) return;
+                feed.innerHTML = "";
+                resetDocColorMap();
+                msgs.forEach((m) => {
+                    if (m.role === "quiz") {
+                        feed.appendChild(buildQuizCard(m.content, true));
+                    } else {
+                        appendBubble(m.role, m.content, m.sources, m.recommendation);
+                    }
+                });
+            }
+
+            // ── Per-document source chips ──
+            // Each uploaded document (identified by document_id from Prompt 2's CRAG
+            // metadata) keeps the same chip color for the lifetime of the currently
+            // displayed conversation, so a filename is visually recognizable across
+            // multiple answers even without re-reading the label. Web/general sources
+            // don't have a document_id and always render with the neutral "web" style.
+            const DOC_CHIP_PALETTE_SIZE = 5;
+            let docColorMap = new Map();
+
+            function resetDocColorMap() {
+                docColorMap = new Map();
+            }
+
+            function getDocChipClass(source) {
+                if (source.type !== "textbook" || !source.document_id) return "doc-chip web";
+                if (!docColorMap.has(source.document_id)) {
+                    docColorMap.set(source.document_id, docColorMap.size % DOC_CHIP_PALETTE_SIZE);
+                }
+                return `doc-chip doc-chip-${docColorMap.get(source.document_id)}`;
+            }
+
+            function sourceChipLabel(source) {
+                if (source.type !== "textbook") return source.title || "Web result";
+                return source.page ? `${source.filename} · p.${source.page}` : source.filename;
+            }
+
+            // Renders one small badge per retrieved source below an AI answer — filename
+            // (+ page, if the file type has one), color-coded per document. Clicking a
+            // chip opens the existing Sources Drawer scoped to just that excerpt; a
+            // "View all" chip appears too when more than one source was used.
+            function renderSourceChips(wrapper, sources) {
+                if (!sources || sources.length === 0) return;
+                const row = document.createElement("div");
+                row.className = "source-chips-row";
+
+                sources.forEach((s) => {
+                    const chip = document.createElement("button");
+                    chip.type = "button";
+                    chip.className = getDocChipClass(s);
+                    chip.title = "Click to view this excerpt";
+                    const icon = s.type === "textbook" ? "description" : "language";
+                    chip.innerHTML = `<span class="material-symbols-outlined">${icon}</span><span class="chip-label">${escapeHtml(sourceChipLabel(s))}</span>`;
+                    chip.onclick = (e) => {
+                        e.stopPropagation();
+                        window.openSources([s], chip);
+                    };
+                    row.appendChild(chip);
+                });
+
+                if (sources.length > 1) {
+                    const allBtn = document.createElement("button");
+                    allBtn.type = "button";
+                    allBtn.className = "sources-trigger-btn";
+                    allBtn.style.marginTop = "0";
+                    allBtn.innerHTML = `<span class="material-symbols-outlined" style="font-size:11px;vertical-align:-1px">travel_explore</span>&nbsp;View all (${sources.length})`;
+                    allBtn.onclick = (e) => {
+                        e.stopPropagation();
+                        window.openSources(sources, allBtn);
+                    };
+                    row.appendChild(allBtn);
+                }
+
+                wrapper.appendChild(row);
+            }
+
+            function renderPrerequisiteSuggestion(wrapper, recommendation) {
+                if (!recommendation || !recommendation.subject || !recommendation.topic) return;
+
+                const card = document.createElement("div");
+                card.className = "mt-3 px-4 py-3 rounded-xl border border-primary/25 bg-primary/5 text-sm text-on-surface";
+                const message = document.createElement("p");
+                message.className = "mb-2";
+                message.textContent = `${recommendation.topic} is a prerequisite for ${recommendation.for_topic}. Your current score is ${recommendation.score}%; reviewing it may help.`;
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "px-3 py-1.5 rounded-lg bg-primary text-on-primary text-xs font-bold hover:opacity-90";
+                button.textContent = "Learn this topic";
+                button.onclick = () => {
+                    const params = new URLSearchParams({
+                        topic: recommendation.topic,
+                        subject: recommendation.subject,
+                        level: "weak",
+                        score: String(recommendation.score ?? 0),
+                    });
+                    window.location.href = `/topic.html?${params}`;
+                };
+                card.append(message, button);
+                wrapper.appendChild(card);
+            }
+
+            function appendBubble(role, content, sources, recommendation) {
+                const feed = document.getElementById("chat-feed");
+                if (!feed) return;
+                const wrapper = document.createElement("div");
+                wrapper.className = "flex flex-col gap-1 " + (role === "user" ? "items-end" : "items-start");
+
+                const label = document.createElement("div");
+                label.className = "flex items-center gap-2 px-1";
+                label.innerHTML = role === "user"
+                    ? `<span class="text-[10px] text-outline">just now</span><span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">You</span>`
+                    : `<div class="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center"><span class="material-symbols-outlined text-[12px] text-primary" style="font-variation-settings:'FILL' 1">auto_awesome</span></div><span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Tutor AI</span>`;
+
+                const bubble = document.createElement("div");
+                bubble.className = role === "user" ? "user-bubble" : "ai-bubble";
+                bubble.innerHTML = marked.parse(content);
+
+                wrapper.appendChild(label);
+                wrapper.appendChild(bubble);
+
+                // Attach per-document source chips for AI messages that have sources
+                if (role === "assistant") renderSourceChips(wrapper, sources);
+                if (role === "assistant") renderPrerequisiteSuggestion(wrapper, recommendation);
+
+                feed.appendChild(wrapper);
+                feed.scrollTop = feed.scrollHeight;
+            }
+
+            let stopController = null;
+
+            function stopResponse() {
+                if (stopController) stopController.abort();
+            }
+
+            window.sendMessage = async function () {
+                const input = document.getElementById("chat-input");
+                const question = input.value.trim();
+                if (!question || !activeSessionId) return;
+                input.value = "";
+                appendBubble("user", question);
+
+                // Show stop, hide send
+                document.getElementById("stop-btn").classList.remove("hidden");
+                document.getElementById("send-btn").classList.add("hidden");
+
+                const feed = document.getElementById("chat-feed");
+                // Build AI bubble with streaming placeholder
+                const wrapper = document.createElement("div");
+                wrapper.className = "flex flex-col gap-1 items-start";
+                const label = document.createElement("div");
+                label.className = "flex items-center gap-2 px-1";
+                label.innerHTML = `<div class="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center"><span class="material-symbols-outlined text-[12px] text-primary" style="font-variation-settings:'FILL' 1">auto_awesome</span></div><span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Tutor AI</span>`;
+                const bubble = document.createElement("div");
+                bubble.className = "ai-bubble";
+                bubble.innerHTML = `<span class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></span><span class="text-sm text-on-surface-variant">Thinking...</span></span>`;
+                wrapper.appendChild(label);
+                wrapper.appendChild(bubble);
+                feed.appendChild(wrapper);
+                feed.scrollTop = feed.scrollHeight;
+
+                stopController = new AbortController();
+                let fullText = "";
+                let lastSources = [];  // ← captured from the sources SSE event
+                let lastRecommendation = null;
+
+                try {
+                    const res = await fetch(`${API}/api/chat`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ session_id: activeSessionId, question }),
+                        signal: stopController.signal,
+                    });
+
+                    if (!res.ok) {
+                        const errData = await res.json().catch(() => ({}));
+                        bubble.innerHTML = `<span class="text-error text-sm">❌ Error: ${escapeHtml(errData.detail || "Failed to get response.")}</span>`;
+                        return;
+                    }
+
+                    const reader = res.body.getReader();
+                    const decoder = new TextDecoder();
+                    let buffer = "";
+                    let streamError = null;
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+                        buffer += decoder.decode(value, { stream: true });
+                        const lines = buffer.split("\n");
+                        buffer = lines.pop();
+                        for (const line of lines) {
+                            if (!line.startsWith("data: ")) continue;
+                            const data = line.slice(6).trim();
+                            if (data === "[DONE]") break;
+                            try {
+                                const parsed = JSON.parse(data);
+                                if (parsed.chunk) {
+                                    fullText += parsed.chunk;
+                                    // Stream raw text to bubble (follow-ups will be stripped after done)
+                                    bubble.innerHTML = marked.parse(fullText);
+                                    feed.scrollTop = feed.scrollHeight;
+                                }
+                                if (parsed.sources) {
+                                    lastSources = parsed.sources;  // store for Sources Drawer
+                                }
+                                if (parsed.recommendation) {
+                                    lastRecommendation = parsed.recommendation;
+                                }
+                                if (parsed.error) {
+                                    streamError = parsed.error;
+                                }
+                            } catch {}
+                        }
+                    }
+
+                    // Once streaming is done, parse and separate follow-up questions
+                    const { mainText, followUps } = parseFollowUps(fullText);
+                    bubble.innerHTML = marked.parse(mainText);
+                    if (streamError || !fullText.trim()) {
+                        const errorMessage = streamError || "No answer was received. Check the server logs.";
+                        bubble.innerHTML += `<p class="text-error text-sm mt-2">❌ ${escapeHtml(errorMessage)}</p>`;
+                        return;
+                    }
+
+                    if (followUps.length > 0) {
+                        const chips = document.createElement("div");
+                        chips.className = "flex flex-wrap gap-2 mt-3";
+                        followUps.forEach(q => {
+                            const btn = document.createElement("button");
+                            btn.className = "text-xs px-3 py-1.5 rounded-full border border-primary/30 text-primary/80 hover:bg-primary/10 hover:border-primary/60 transition-all text-left";
+                            btn.textContent = q;
+                            btn.onclick = () => {
+                                document.getElementById("chat-input").value = q;
+                                document.getElementById("chat-input").focus();
+                            };
+                            chips.appendChild(btn);
+                        });
+                        wrapper.appendChild(chips);
+                    }
+
+                    feed.scrollTop = feed.scrollHeight;
+
+                    // Attach Sources hover button to the wrapper
+                    renderSourceChips(wrapper, lastSources);
+                    renderPrerequisiteSuggestion(wrapper, lastRecommendation);
+
+                    const sessions = await fetch(`${API}/api/sessions`).then((r) => r.json());
+                    renderSessions(sessions);
+                } catch (e) {
+                    if (e.name === "AbortError") {
+                        if (!fullText) bubble.innerHTML = `<span class="text-on-surface-variant text-sm">⏹ Response stopped.</span>`;
+                        else bubble.innerHTML = marked.parse(parseFollowUps(fullText).mainText);
+                    } else {
+                        bubble.innerHTML = `<span class="text-error text-sm">❌ Error getting response.</span>`;
+                    }
+                } finally {
+                    document.getElementById("stop-btn").classList.add("hidden");
+                    document.getElementById("send-btn").classList.remove("hidden");
+                    stopController = null;
+                }
+            };
+
+            function parseFollowUps(text) {
+                const marker = "FOLLOW_UPS:";
+                const idx = text.indexOf(marker);
+                if (idx === -1) return { mainText: text.trim(), followUps: [] };
+
+                const mainText = text.slice(0, idx).trim();
+                const followUpBlock = text.slice(idx + marker.length).trim();
+                const followUps = followUpBlock
+                    .split("\n")
+                    .map(l => l.replace(/^\d+\.\s*/, "").trim())
+                    .filter(l => l.length > 0)
+                    .slice(0, 3);
+                return { mainText, followUps };
+            }
+
+            document.getElementById("chat-input").addEventListener("keydown", (e) => {
+                if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+            });
+
+            // Escape user-controlled text (filenames, backend error strings) before it goes into innerHTML.
+            function escapeHtml(str) {
+                const div = document.createElement("div");
+                div.textContent = str ?? "";
+                return div.innerHTML;
+            }
+
+            // POST with progress via XHR — fetch() has no upload-progress event, so multi-file
+            // batches (which can take a while over slow connections) would otherwise show nothing
+            // moving until the whole request finishes.
+            function uploadWithProgress(url, formData, onProgress) {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    xhr.open("POST", url);
+                    xhr.upload.onprogress = (e) => {
+                        if (e.lengthComputable && onProgress) onProgress(Math.round((e.loaded / e.total) * 100));
+                    };
+                    xhr.onload = () => {
+                        let body = {};
+                        try { body = JSON.parse(xhr.responseText); } catch (_) { /* non-JSON error page */ }
+                        resolve({ status: xhr.status, body });
+                    };
+                    xhr.onerror = () => reject(new Error("Network error"));
+                    xhr.send(formData);
+                });
+            }
+
+            // ── Transient "this batch's" upload/processing status panel ──
+            // Backend from Prompt 1 reports final per-file status (ready/failed + chunk_count/error)
+            // synchronously in the /upload response body — there's no background job to poll, so
+            // "live" status here means: real upload-progress while bytes are in flight (XHR), then an
+            // immediate per-file ready/failed reconciliation once the response comes back. The
+            // authoritative Active Documents list below is always refreshed from the server after,
+            // so this panel only needs to hold state for the few seconds a user watches an upload go.
+            const uploadRowEls = new Map();
+            let uploadClearTimer = null;
+
+            function resetUploadPanel() {
+                if (uploadClearTimer) { clearTimeout(uploadClearTimer); uploadClearTimer = null; }
+                const panel = document.getElementById("upload-progress-list");
+                if (panel) { panel.innerHTML = ""; panel.classList.add("hidden"); }
+                uploadRowEls.clear();
+            }
+
+            function renderUploadRow(filename, info) {
+                const panel = document.getElementById("upload-progress-list");
+                if (!panel) return;
+                panel.classList.remove("hidden");
+
+                let row = uploadRowEls.get(filename);
+                if (!row) {
+                    row = document.createElement("div");
+                    row.className = "px-4 py-2.5 bg-surface-container-high rounded-xl flex items-center gap-3";
+                    panel.appendChild(row);
+                    uploadRowEls.set(filename, row);
+                }
+
+                let iconHtml, statusHtml;
+                if (info.state === "uploading") {
+                    iconHtml = `<span class="material-symbols-outlined animate-spin text-primary text-[18px]">progress_activity</span>`;
+                    statusHtml = `<div class="h-1 rounded-full bg-surface-container-highest overflow-hidden mt-1.5">
+                        <div class="h-full bg-primary transition-all" style="width:${info.progress ?? 0}%"></div>
+                    </div>`;
+                } else if (info.state === "processing") {
+                    iconHtml = `<span class="material-symbols-outlined animate-spin text-secondary text-[18px]">progress_activity</span>`;
+                    statusHtml = `<p class="text-[10px] text-on-surface-variant uppercase font-bold tracking-tighter">Processing…</p>`;
+                } else if (info.state === "ready") {
+                    iconHtml = `<span class="material-symbols-outlined text-tertiary text-[18px]">check_circle</span>`;
+                    statusHtml = `<p class="text-[10px] text-tertiary uppercase font-bold tracking-tighter">Ready &middot; ${info.chunkCount ?? 0} chunks</p>`;
+                } else {
+                    iconHtml = `<span class="material-symbols-outlined text-error text-[18px]">error</span>`;
+                    const msg = info.message || "Failed";
+                    statusHtml = `<p class="text-[10px] text-error font-bold truncate" title="${escapeHtml(msg)}">${escapeHtml(msg)}</p>`;
+                }
+
+                row.innerHTML = `
+                    <div class="w-8 h-8 rounded-full bg-surface-container-highest flex items-center justify-center shrink-0">${iconHtml}</div>
+                    <div class="flex-1 min-w-0">
+                        <p class="text-xs font-bold text-on-surface truncate">${escapeHtml(filename)}</p>
+                        ${statusHtml}
+                    </div>
+                `;
+            }
+
+            function scheduleUploadPanelClear(delay = 4000) {
+                if (uploadClearTimer) clearTimeout(uploadClearTimer);
+                uploadClearTimer = setTimeout(resetUploadPanel, delay);
+            }
+
+            const ALLOWED_UPLOAD_EXTENSIONS = [".pdf", ".txt", ".docx"];
+
+            async function uploadFiles(files) {
+                if (!activeSessionId || !files || !files.length) return;
+                resetUploadPanel();
+
+                // Client-side extension guard, mirroring the file input's `accept` attribute —
+                // catches drag-and-drop, which bypasses `accept`. Rejected files never touch the
+                // network; the backend still validates independently for anything that slips through.
+                const accepted = [];
+                const rejected = [];
+                files.forEach((f) => {
+                    const ext = "." + (f.name.split(".").pop() || "").toLowerCase();
+                    (ALLOWED_UPLOAD_EXTENSIONS.includes(ext) ? accepted : rejected).push(f);
+                });
+                rejected.forEach((f) => renderUploadRow(f.name, {
+                    state: "failed",
+                    message: `Unsupported file type — only ${ALLOWED_UPLOAD_EXTENSIONS.join(", ")} allowed`,
+                }));
+
+                if (!accepted.length) {
+                    scheduleUploadPanelClear();
+                    return;
+                }
+
+                accepted.forEach((f) => renderUploadRow(f.name, { state: "uploading", progress: 0 }));
+
+                const form = new FormData();
+                accepted.forEach((f) => form.append("files", f));
+
+                const statusEl = document.getElementById("db-status");
+                if (statusEl) statusEl.textContent = `⏳ UPLOADING ${accepted.length} FILE${accepted.length > 1 ? "S" : ""}...`;
+
+                try {
+                    const { status: httpStatus, body: res } = await uploadWithProgress(
+                        `${API}/api/sessions/${activeSessionId}/upload`,
+                        form,
+                        (pct) => {
+                            accepted.forEach((f) => renderUploadRow(f.name, { state: "uploading", progress: pct }));
+                            if (statusEl) statusEl.textContent = `⏳ UPLOADING… ${pct}%`;
+                        }
+                    );
+
+                    if (httpStatus >= 400) {
+                        // Whole-batch failure (e.g. none of the files had any readable text at all).
+                        const detail = res.detail || "Upload failed";
+                        accepted.forEach((f) => renderUploadRow(f.name, { state: "failed", message: detail }));
+                        if (statusEl) statusEl.textContent = "❌ UPLOAD FAILED";
+                        scheduleUploadPanelClear(8000);
+                        return;
+                    }
+
+                    if (statusEl) statusEl.textContent = "⏳ PROCESSING…";
+                    accepted.forEach((f) => renderUploadRow(f.name, { state: "processing" }));
+
+                    const perFile = res.documents || [];
+                    perFile.forEach((d) => {
+                        if (d.status === "ready") {
+                            renderUploadRow(d.filename, { state: "ready", chunkCount: d.chunk_count });
+                        } else {
+                            renderUploadRow(d.filename, { state: "failed", message: d.error || "Processing failed" });
+                        }
+                    });
+
+                    const readyCount = perFile.filter((d) => d.status === "ready").length;
+                    const failedCount = perFile.length - readyCount;
+                    if (statusEl) {
+                        statusEl.textContent = failedCount > 0
+                            ? `⚠️ ${readyCount} READY · ${failedCount} FAILED`
+                            : `✅ DATABASE READY (${res.doc_count} CHUNKS)`;
+                    }
+                    scheduleUploadPanelClear(failedCount > 0 ? 8000 : 3000);
+                } catch (e) {
+                    accepted.forEach((f) => renderUploadRow(f.name, { state: "failed", message: "Network error — please retry" }));
+                    if (statusEl) statusEl.textContent = "❌ UPLOAD FAILED";
+                    scheduleUploadPanelClear(8000);
+                } finally {
+                    // The Active Documents list is the source of truth — always resync it from the
+                    // server, whether this batch fully succeeded, partially failed, or errored out.
+                    loadDocuments(activeSessionId);
+                }
+            }
+
+            window.uploadAndBuild = async function () {
+                const fileInput = document.getElementById("file-input");
+                if (!fileInput || !fileInput.files.length) return;
+                const files = Array.from(fileInput.files);
+                fileInput.value = ""; // allow re-selecting the same file(s) later
+                await uploadFiles(files);
+            };
+
+            function setupDocDropZone() {
+                const dropZone = document.getElementById("doc-drop-zone");
+                if (!dropZone) return;
+
+                ["dragenter", "dragover"].forEach((evt) => dropZone.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.add("border-primary", "bg-surface-container-high/50");
+                }));
+                ["dragleave", "drop"].forEach((evt) => dropZone.addEventListener(evt, (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    dropZone.classList.remove("border-primary", "bg-surface-container-high/50");
+                }));
+                dropZone.addEventListener("drop", (e) => {
+                    const files = Array.from(e.dataTransfer?.files || []);
+                    if (files.length) uploadFiles(files);
+                });
+
+                // Prevent a stray drop just outside the zone from navigating the browser away.
+                ["dragover", "drop"].forEach((evt) => window.addEventListener(evt, (e) => {
+                    if (!e.target.closest("#doc-drop-zone")) e.preventDefault();
+                }));
+            }
+
+            async function checkDbStatus(sessionId) {
+                const res = await fetch(`${API}/api/sessions/${sessionId}/db-status`).then((r) => r.json());
+                const statusEl = document.getElementById("db-status");
+                if (statusEl) statusEl.textContent = res.exists ? "✅ ANSWERING WITH YOUR DOCUMENTS" : "💬 GENERAL KNOWLEDGE MODE — DOCUMENTS OPTIONAL";
+            }
+
+            const FILE_TYPE_ICONS = { pdf: "picture_as_pdf", docx: "description", txt: "article" };
+
+            // Load and render the session's documents (the authoritative, server-persisted list —
+            // includes both ready and failed documents per Prompt 1's per-file status tracking).
+            async function loadDocuments(sessionId) {
+                const list = document.getElementById("active-documents-list");
+                const badge = document.getElementById("doc-count-badge");
+                if (!list || !badge) return;
+
+                try {
+                    const docs = await fetch(`${API}/api/sessions/${sessionId}/documents`).then(r => r.json());
+                    list.innerHTML = "";
+                    badge.textContent = `${docs.length}/10`;
+
+                    // Show/hide the clear KB button based on whether docs exist
+                    const clearBtn = document.getElementById("clear-kb-btn");
+                    if (clearBtn) clearBtn.classList.toggle("hidden", docs.length === 0);
+
+                    // Render each uploaded file as a pill card
+                    docs.forEach(doc => {
+                        const sizeMB = (doc.size / (1024 * 1024)).toFixed(1);
+                        const sizeStr = sizeMB >= 0.1 ? `${sizeMB}MB` : `${(doc.size / 1024).toFixed(1)}KB`;
+                        const isFailed = doc.status === "failed";
+                        const icon = FILE_TYPE_ICONS[doc.file_type] || "draft";
+
+                        const div = document.createElement("div");
+                        div.className = `p-4 bg-surface-container-high rounded-full border-l-4 ${isFailed ? "border-error" : "border-secondary"} flex items-center gap-4 group cursor-pointer hover:bg-surface-bright transition-all`;
+                        if (isFailed && doc.error) div.title = doc.error;
+
+                        const statusLine = isFailed
+                            ? `FAILED${doc.error ? " &middot; " + escapeHtml(doc.error) : ""}`
+                            : `READY &middot; ${doc.chunk_count ?? 0} CHUNKS &middot; ${sizeStr}`;
+
+                        div.innerHTML = `
+                <div class="w-10 h-10 rounded-full ${isFailed ? "bg-error/10 text-error" : "bg-secondary/10 text-secondary"} flex items-center justify-center">
+                  <span class="material-symbols-outlined">${isFailed ? "error_outline" : icon}</span>
+                </div>
+                <div class="flex-1 overflow-hidden">
+                  <p class="text-sm font-bold text-on-surface truncate">${escapeHtml(doc.name)}</p>
+                  <p class="text-[10px] ${isFailed ? "text-error" : "text-on-surface-variant"} uppercase font-bold tracking-tighter truncate">${statusLine}</p>
+                </div>
+              `;
+                        list.appendChild(div);
+                    });
+
+                } catch (e) {
+                    console.error("Failed to load documents", e);
+                }
+            }
+
+            window.clearKnowledgeBase = async function () {
+                if (!activeSessionId) return;
+                if (!confirm("Clear all uploaded documents and the knowledge base for this session? Chat history will be kept.")) return;
+                await fetch(`${API}/api/sessions/${activeSessionId}/knowledge`, { method: "DELETE" });
+                const statusEl = document.getElementById("db-status");
+                if (statusEl) statusEl.textContent = "💬 GENERAL KNOWLEDGE MODE — DOCUMENTS OPTIONAL";
+                document.getElementById("clear-kb-btn").classList.add("hidden");
+                loadDocuments(activeSessionId);
+            };
+
+            let currentQuiz = null;
+
+            // Build a collapsible quiz card DOM element
+            function buildQuizCard(quiz, readOnly = false) {
+                const quizNum = document.querySelectorAll(".quiz-feed-card").length + 1;
+                const card = document.createElement("div");
+                card.className = "quiz-feed-card max-w-4xl w-full";
+
+                const header = document.createElement("button");
+                header.className = "w-full flex items-center justify-between px-5 py-3.5 bg-surface-container-high rounded-2xl border border-secondary/20 hover:border-secondary/40 transition-all group";
+                header.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="w-7 h-7 rounded-lg bg-secondary/10 flex items-center justify-center">
+                            <span class="material-symbols-outlined text-secondary text-[16px]" style="font-variation-settings:'FILL' 1">quiz</span>
+                        </div>
+                        <span class="font-bold text-sm text-on-surface">Assessment Quiz #${quizNum}</span>
+                        <span class="text-xs text-on-surface-variant">(${(quiz.questions || []).length} questions)</span>
+                    </div>
+                    <span class="material-symbols-outlined text-on-surface-variant group-hover:text-secondary transition-colors chevron-icon">expand_more</span>`;
+
+                const body = document.createElement("div");
+                body.className = "hidden mt-2 space-y-3 px-1";
+
+                header.onclick = () => {
+                    body.classList.toggle("hidden");
+                    const icon = header.querySelector(".chevron-icon");
+                    icon.textContent = body.classList.contains("hidden") ? "expand_more" : "expand_less";
+                };
+
+                (quiz.questions || []).forEach((q, i) => {
+                    const block = document.createElement("div");
+                    block.className = "quiz-question";
+                    block.innerHTML = `<p><strong>Q${i + 1}: ${q.question}</strong><em class="text-on-surface-variant text-xs ml-2 block mt-1">${q.subject} • ${q.topic}</em></p>`;
+                    q.options.forEach((opt, idx) => {
+                        const btn = document.createElement("button");
+                        btn.className = "quiz-option";
+                        btn.textContent = opt;
+                        if (readOnly) {
+                            btn.disabled = true;
+                            if (idx === q.correct_index) btn.classList.add("correct");
+                        } else {
+                            btn.onclick = () => submitAnswer(q, idx, btn, block);
+                        }
+                        block.appendChild(btn);
+                    });
+                    if (readOnly && q.explanation) {
+                        const exp = document.createElement("p");
+                        exp.className = "quiz-explanation";
+                        exp.textContent = q.explanation;
+                        block.appendChild(exp);
+                    }
+                    body.appendChild(block);
+                });
+
+                card.appendChild(header);
+                card.appendChild(body);
+                return card;
+            }
+
+            window.generateQuiz = async function () {
+                const feed = document.getElementById("chat-feed");
+
+                // Show a loading placeholder in the feed
+                const loadingCard = document.createElement("div");
+                loadingCard.className = "quiz-feed-card max-w-4xl w-full";
+                loadingCard.innerHTML = `<div class="flex items-center gap-3 px-5 py-3.5 bg-surface-container-high rounded-2xl border border-secondary/20">
+                    <div class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></div>
+                    <span class="text-sm text-on-surface-variant">Generating quiz...</span>
+                </div>`;
+                feed.appendChild(loadingCard);
+                feed.scrollTop = feed.scrollHeight;
+
+                try {
+                    const quiz = await fetch(`${API}/api/sessions/${activeSessionId}/quiz`, { method: "POST" }).then((r) => r.json());
+                    currentQuiz = quiz;
+                    loadingCard.replaceWith(buildQuizCard(quiz, false));
+                    feed.scrollTop = feed.scrollHeight;
+                } catch {
+                    loadingCard.innerHTML = `<p class="text-error text-sm px-4 py-3">❌ Failed to generate quiz. Build the database first.</p>`;
+                }
+            };
+
+            async function submitAnswer(q, selectedIdx, btn, block) {
+                block.querySelectorAll(".quiz-option").forEach((b) => (b.disabled = true));
+                const isCorrect = selectedIdx === q.correct_index;
+                btn.classList.add(isCorrect ? "correct" : "wrong");
+                block.querySelectorAll(".quiz-option")[q.correct_index].classList.add("correct");
+                const exp = document.createElement("p");
+                exp.className = "quiz-explanation";
+                exp.textContent = q.explanation;
+                block.appendChild(exp);
+                const recorded = await fetch(`${API}/api/quiz/answer`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ session_id: activeSessionId, subject: q.subject, topic: q.topic,
+                        is_correct: isCorrect, question: q.question,
+                        selected_answer: q.options[selectedIdx], correct_answer: q.options[q.correct_index] }),
+                }).catch(() => null);
+                if (!recorded?.ok) {
+                    const error = document.createElement("p");
+                    error.className = "text-error text-sm";
+                    error.textContent = "Your answer could not be saved. Please check your connection.";
+                    block.appendChild(error);
+                    return;
+                }
+                window.dispatchEvent(new Event("review-recorded"));
+                loadProfile();
+            }
+
+            async function loadProfile() {
+                const data = await fetch(`${API}/api/profile`).then((r) => r.json());
+                const container = document.getElementById("knowledge-profile");
+                if (!container) return;
+                container.innerHTML = "";
+
+                const levelMeta = {
+                    strong: { label: "MASTERY HIGH", color: "#3fff8b", gradFrom: "from-tertiary", gradTo: "to-tertiary-container" },
+                    average: { label: "PROGRESSING", color: "#d095ff", gradFrom: "from-primary", gradTo: "to-primary-container" },
+                    weak: { label: "FOCUS REQUIRED", color: "#ff6e84", gradFrom: "from-error", gradTo: "to-error-dim" },
+                };
+
+                let hasData = false;
+                Object.entries(data).forEach(([subject, subjectData]) => {
+                    ["strong", "average", "weak"].forEach((level) => {
+                        (subjectData[level] || []).forEach(([topic, score, c, t]) => {
+                            hasData = true;
+                            const pct = Math.round(score * 100);
+                            const { label, color, gradFrom, gradTo } = levelMeta[level];
+                            const div = document.createElement("div");
+                            div.className = "space-y-3";
+                            div.innerHTML = `
+                <div class="flex justify-between items-center">
+                  <div class="flex-1 min-w-0">
+                    <p class="text-xs font-bold text-on-surface truncate pr-2">${topic}</p>
+                    <p class="text-[10px] font-bold tracking-tight uppercase" style="color:${color}">${label}</p>
+                  </div>
+                  <div class="flex items-center gap-1.5 flex-shrink-0">
+                    <button title="Remove topic"
+                        style="color:rgba(255,110,132,0.35); background:transparent; width:18px; height:18px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:all 0.15s; border:none; cursor:pointer; flex-shrink:0;"
+                        onmouseenter="this.style.color='#ff6e84';this.style.background='rgba(255,110,132,0.15)'"
+                        onmouseleave="this.style.color='rgba(255,110,132,0.35)';this.style.background='transparent'"
+                        onclick="deleteSidebarTopic('${subject}', '${topic}')">
+                      <span class="material-symbols-outlined" style="font-size:13px">close</span>
+                    </button>
+                    <span class="text-sm font-black text-on-surface">${pct}%</span>
+                  </div>
+                </div>
+                <div class="h-2 w-full bg-surface-container-highest rounded-full overflow-hidden">
+                  <div class="h-full bg-gradient-to-r ${gradFrom} ${gradTo} rounded-full" style="width:${pct}%"></div>
+                </div>`;
+                            container.appendChild(div);
+                        });
+                    });
+                });
+
+                if (!hasData) {
+                    container.innerHTML = `<p class="text-xs text-on-surface-variant opacity-50">Complete quizzes to build your profile.</p>`;
+                }
+            }
+
+            window.deleteSidebarTopic = async function(subject, topic) {
+                if (!confirm(`Remove "${topic}" from your Knowledge Profile?`)) return;
+                await fetch(`${API}/api/profile/${encodeURIComponent(subject)}/${encodeURIComponent(topic)}`, { method: "DELETE" });
+                loadProfile();
+            };
+
+
+            // ── Subjects Management ───────────────────────────────────────
+
+            async function loadSubjects() {
+                const res = await fetch(`${API}/api/subjects`).then(r => r.json());
+                renderSubjectChips(res.subjects || []);
+            }
+
+            function renderSubjectChips(subjects) {
+                const container = document.getElementById("subjects-chips");
+                if (!container) return;
+                container.innerHTML = "";
+                if (subjects.length === 0) {
+                    container.innerHTML = `<span class="text-[10px] text-on-surface-variant/40 italic">No subjects added yet — all CS topics will be used.</span>`;
+                    return;
+                }
+                subjects.forEach(subject => {
+                    const chip = document.createElement("div");
+                    chip.className = "flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary/10 border border-secondary/20 text-secondary text-xs font-bold";
+                    chip.innerHTML = `
+                        <span class="material-symbols-outlined text-[12px]" style="font-variation-settings:'FILL' 1">school</span>
+                        ${subject}
+                        <button onclick="removeSubject('${subject}')"
+                            class="ml-1 text-secondary/50 hover:text-error transition-colors">
+                            <span class="material-symbols-outlined text-[12px]">close</span>
+                        </button>`;
+                    container.appendChild(chip);
+                });
+            }
+
+            window.addSubject = async function() {
+                const input = document.getElementById("subject-input");
+                const subject = input.value.trim();
+                if (!subject) return;
+                input.value = "";
+                const res = await fetch(`${API}/api/subjects`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ subject })
+                }).then(r => r.json());
+                renderSubjectChips(res.subjects || []);
+            };
+
+            window.removeSubject = async function(subject) {
+                const res = await fetch(`${API}/api/subjects/${encodeURIComponent(subject)}`, {
+                    method: "DELETE"
+                }).then(r => r.json());
+                renderSubjectChips(res.subjects || []);
+            };
+
+            // ── View Switcher ─────────────────────────────────────────
+
+            function refreshProgressView() {
+                if (typeof window.loadStats === "function") window.loadStats();
+                if (typeof window.refreshReviewQueue === "function") window.refreshReviewQueue();
+            }
+
+            window.switchView = function(view) {
+                const studyView    = document.getElementById("study-view");
+                const memoryView   = document.getElementById("memory-view");
+                const progressView = document.getElementById("progress-view");
+                const navStudy     = document.getElementById("nav-study");
+                const navMemory    = document.getElementById("nav-memory");
+                const navProgress  = document.getElementById("nav-progress");
+                const deletBtn     = document.getElementById("delete-session-btn");
+
+                const activeClass   = "bg-[#1f1f22] text-[#d095ff] rounded-xl mx-2 px-4 py-3 font-semibold flex items-center gap-3 cursor-pointer text-sm";
+                const inactiveClass = "text-[#f6f3f5]/60 hover:text-[#f6f3f5] px-4 py-3 transition-colors hover:bg-[#1f1f22]/50 rounded-xl mx-2 flex items-center gap-3 cursor-pointer text-sm font-medium";
+
+                [studyView, memoryView, progressView].forEach((el) => {
+                    el.classList.add("hidden");
+                    el.classList.remove("flex");
+                });
+                [navStudy, navMemory, navProgress].forEach((el) => { el.className = inactiveClass; });
+                if (deletBtn) deletBtn.classList.add("hidden");
+
+                if (view === "memory") {
+                    memoryView.classList.remove("hidden");
+                    memoryView.classList.add("flex");
+                    navMemory.className = activeClass;
+                    loadMemoryView();
+                } else if (view === "progress") {
+                    progressView.classList.remove("hidden");
+                    progressView.classList.add("flex");
+                    navProgress.className = activeClass;
+                    refreshProgressView();
+                } else {
+                    studyView.classList.remove("hidden");
+                    studyView.classList.add("flex");
+                    navStudy.className = activeClass;
+                    if (deletBtn) deletBtn.classList.remove("hidden");
+                }
+            };
+
+            // Browsers may restore the old page from the back/forward cache after
+            // a topic quiz; the normal DOMContentLoaded widget fetches do not run.
+            window.addEventListener("pageshow", (event) => {
+                if (event.persisted && !document.getElementById("progress-view").classList.contains("hidden")) {
+                    refreshProgressView();
+                }
+            });
+            window.addEventListener("review-recorded", () => {
+                if (!document.getElementById("progress-view").classList.contains("hidden")) {
+                    refreshProgressView();
+                }
+            });
+
+            // ── Memory Chat ───────────────────────────────────────────
+
+            async function loadSidebarMemory() {
+                try {
+                    const data = await fetch(`${API}/api/memory`).then(r => r.json());
+                    renderSidebarMemory(data.items || []);
+                } catch {}
+            }
+
+            function renderSidebarMemory(items) {
+                const container = document.getElementById("sidebar-memory-list");
+                if (!container) return;
+                container.innerHTML = "";
+                if (items.length === 0) {
+                    container.innerHTML = `<p class="text-xs text-on-surface-variant opacity-40 italic">No preferences saved yet.</p>`;
+                    return;
+                }
+                items.forEach((item, idx) => {
+                    const row = document.createElement("div");
+                    row.className = "flex items-start gap-2 group";
+                    row.innerHTML = `
+                        <span class="material-symbols-outlined text-primary text-[12px] mt-0.5 flex-shrink-0" style="font-variation-settings:'FILL' 1">memory</span>
+                        <span class="flex-1 text-[11px] text-on-surface/70 leading-relaxed">${item}</span>
+                        <button onclick="deleteSidebarMemory(${idx})" class="opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                            <span class="material-symbols-outlined text-error/50 hover:text-error text-[12px]">close</span>
+                        </button>`;
+                    container.appendChild(row);
+                });
+            }
+
+            window.deleteSidebarMemory = async function(index) {
+                const res = await fetch(`${API}/api/memory/${index}`, { method: "DELETE" }).then(r => r.json());
+                renderSidebarMemory(res.items || []);
+                renderMemoryChipsView(res.items || []);
+            };
+
+            async function loadMemoryView() {
+                try {
+                    const [histRes, memRes] = await Promise.all([
+                        fetch(`${API}/api/memory/chat`).then(r => r.json()),
+                        fetch(`${API}/api/memory`).then(r => r.json()),
+                    ]);
+
+                    const feed = document.getElementById("memory-chat-feed");
+                    feed.innerHTML = "";
+
+                    // If no history, show welcome bubble from bot
+                    if (!histRes.history || histRes.history.length === 0) {
+                        appendMemoryBubble("assistant", "Hi! 👋 I'm your personal Study Companion. Tell me about yourself — your learning preferences, background, favourite programming language, or how you like things explained. I'll remember everything and apply it in all your study sessions.");
+                    } else {
+                        histRes.history.forEach(m => appendMemoryBubble(m.role, m.content));
+                    }
+
+                    renderMemoryChipsView(memRes.items || []);
+                    renderSidebarMemory(memRes.items || []);
+                } catch (e) {
+                    console.error("Failed to load memory view", e);
+                }
+            }
+
+            function appendMemoryBubble(role, content) {
+                const feed = document.getElementById("memory-chat-feed");
+                if (!feed) return;
+                const wrapper = document.createElement("div");
+                wrapper.className = "flex flex-col gap-1 " + (role === "user" ? "items-end" : "items-start");
+                wrapper.innerHTML = role === "user"
+                    ? `<span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant px-1">You</span>
+                       <div class="user-bubble max-w-[80%]">${marked.parse(content)}</div>`
+                    : `<div class="flex items-center gap-2 px-1">
+                           <div class="w-5 h-5 rounded-full bg-primary/10 flex items-center justify-center">
+                               <span class="material-symbols-outlined text-[12px] text-primary" style="font-variation-settings:'FILL' 1">psychology</span>
+                           </div>
+                           <span class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Memory Bot</span>
+                       </div>
+                       <div class="ai-bubble max-w-[80%]">${marked.parse(content)}</div>`;
+                feed.appendChild(wrapper);
+                feed.scrollTop = feed.scrollHeight;
+                return wrapper;
+            }
+
+            window.sendMemoryMessage = async function () {
+                const input = document.getElementById("memory-chat-input");
+                const sendBtn = document.getElementById("memory-chat-send");
+                const text = input.value.trim();
+                if (!text) return;
+
+                input.value = "";
+                appendMemoryBubble("user", text);
+
+                // Thinking placeholder
+                const feed = document.getElementById("memory-chat-feed");
+                const thinking = document.createElement("div");
+                thinking.className = "flex flex-col gap-1 items-start";
+                thinking.innerHTML = `<div class="ai-bubble flex items-center gap-2">
+                    <div class="w-1.5 h-1.5 rounded-full bg-primary animate-pulse"></div>
+                    <span class="text-sm text-on-surface-variant">Remembering...</span>
+                </div>`;
+                feed.appendChild(thinking);
+                feed.scrollTop = feed.scrollHeight;
+                input.disabled = true;
+                sendBtn.disabled = true;
+
+                try {
+                    const res = await fetch(`${API}/api/memory/chat`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({ message: text }),
+                    }).then(r => r.json());
+
+                    thinking.remove();
+                    appendMemoryBubble("assistant", res.reply);
+                    renderMemoryChipsView(res.items || []);
+                    renderSidebarMemory(res.items || []);
+
+                } catch {
+                    thinking.querySelector(".ai-bubble").textContent = "❌ Error. Try again.";
+                } finally {
+                    input.disabled = false;
+                    sendBtn.disabled = false;
+                    input.focus();
+                }
+            }
+
+            function renderMemoryChipsView(items) {
+                const container = document.getElementById("memory-chips-view");
+                if (!container) return;
+                container.innerHTML = "";
+                if (items.length === 0) {
+                    container.innerHTML = `<span class="text-xs text-on-surface-variant/40 italic">Nothing stored yet</span>`;
+                    return;
+                }
+                items.forEach((item, idx) => {
+                    const chip = document.createElement("div");
+                    chip.className = "flex items-center gap-1.5 bg-primary/8 border border-primary/20 rounded-full px-3 py-1 group";
+                    chip.innerHTML = `
+                        <span class="material-symbols-outlined text-primary text-[11px]" style="font-variation-settings:'FILL' 1">memory</span>
+                        <span class="text-[11px] text-on-surface/80">${item}</span>
+                        <button onclick="deleteMemoryItemView(${idx})" class="opacity-0 group-hover:opacity-100 transition-opacity ml-1">
+                            <span class="material-symbols-outlined text-error/60 hover:text-error text-[12px]">close</span>
+                        </button>`;
+                    container.appendChild(chip);
+                });
+            }
+
+            window.deleteMemoryItemView = async function (index) {
+                const res = await fetch(`${API}/api/memory/${index}`, { method: "DELETE" }).then(r => r.json());
+                renderMemoryChipsView(res.items || []);
+            }
+
+            window.clearAllMemory = async function () {
+                if (!confirm("Clear all stored memory? This cannot be undone.")) return;
+                const res = await fetch(`${API}/api/memory`, { method: "DELETE" }).then(r => r.json());
+                renderMemoryChipsView(res.items || []);
+            }
+
+            window.logout = async function () {
+                if (confirm("Are you sure you want to log out?")) {
+                    await fetch(`${API}/api/auth/logout`, { method: 'POST' });
+                    window.location.href = '/login.html';
+                }
+            }
+
+            init();
+
+            // ── Spaced Repetition (SRS) widgets ──
+            // initSrsStatsWidget/initReviewQueueWidget mount into their containers,
+            // do the initial fetch, and set up their own auto-refresh intervals
+            // (5 min / 10 min respectively) — see static/widgets/*.js.
+            window.initReviewHistoryWidget("review-history-container");
+            if (typeof window.initSrsStatsWidget === "function") {
+                window.initSrsStatsWidget("srs-stats-container");
+            }
+            if (typeof window.initReviewQueueWidget === "function") {
+                window.initReviewQueueWidget("review-queue-container");
+            }
+        });
+
+        /* ── Light / Dark Mode Toggle ── */
+        function toggleTheme() {
+            const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+            if (isLight) {
+                document.documentElement.removeAttribute('data-theme');
+                localStorage.setItem('scholar-theme', 'dark');
+                _indexPatch(false);
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('scholar-theme', 'light');
+                _indexPatch(true);
+            }
+        }
+
+        function _indexPatch(isLight) {
+            const icon = document.getElementById('theme-icon');
+            if (icon) icon.textContent = isLight ? 'wb_sunny' : 'dark_mode';
+            document.querySelectorAll('aside:first-of-type').forEach(el => {
+                el.style.backgroundColor = isLight ? '#e8e0f5' : '';
+            });
+            const hdr = document.querySelector('header');
+            if (hdr) hdr.style.backgroundColor = isLight ? 'rgba(232,224,245,0.96)' : '';
+            document.querySelectorAll('[class*="bg-[#1f1f22]"]').forEach(el => {
+                el.style.backgroundColor = isLight ? '#d8ccf2' : '';
+            });
+            document.querySelectorAll('[class*="text-[#f6f3f5]"]').forEach(el => {
+                el.style.color = isLight ? '#2d2140' : '';
+            });
+            document.querySelectorAll('[class*="text-[#f6f3f5]/"]').forEach(el => {
+                el.style.color = isLight ? '#6a5a8a' : '';
+            });
+            const memH = document.querySelector('#memory-view > div:first-child');
+            if (memH) memH.style.backgroundColor = isLight ? 'rgba(232,224,245,0.96)' : '';
+
+            // Wire JS hover handlers (bypasses Tailwind CDN hover: utilities)
+            _setupNavHovers(isLight);
+        }
+
+        function _setupNavHovers(isLight) {
+            // Elements that need hover treatment
+            const navItems = [
+                { el: document.getElementById('nav-study'),  active: true  },
+                { el: document.getElementById('nav-memory'), active: false },
+                { el: document.getElementById('nav-progress'), active: false },
+                { el: document.querySelector('aside nav a[href="/knowledge.html"]'), active: false },
+                { el: document.querySelector('aside nav a[href*="knowledge"]'), active: false },
+            ];
+
+            navItems.forEach(({ el, active }) => {
+                if (!el) return;
+                // Remove old listeners (clone trick)
+                const fresh = el.cloneNode(true);
+                el.parentNode.replaceChild(fresh, el);
+                const newEl = fresh;
+
+                if (!isLight) return; // dark mode — no overrides needed
+
+                const base = active
+                    ? { bg: '#d8ccf2', color: '#5b10b8' }
+                    : { bg: 'transparent', color: '#5a4a7a' };
+                const hover = active
+                    ? { bg: '#c4b4e8', color: '#3a009a' }
+                    : { bg: 'rgba(90,40,180,0.12)', color: '#2d1a50' };
+
+                // Set base
+                newEl.style.backgroundColor = base.bg;
+                newEl.style.color = base.color;
+                newEl.style.transition = 'background-color 0.18s ease, color 0.12s ease, transform 0.15s ease';
+                // Restore onclick
+                if (newEl.id === 'nav-study')    newEl.onclick = () => switchView('study');
+                if (newEl.id === 'nav-memory')   newEl.onclick = () => switchView('memory');
+                if (newEl.id === 'nav-progress') newEl.onclick = () => switchView('progress');
+
+                newEl.addEventListener('mouseenter', () => {
+                    if (document.documentElement.getAttribute('data-theme') !== 'light') return;
+                    newEl.style.backgroundColor = hover.bg;
+                    newEl.style.color = hover.color;
+                    newEl.style.transform = 'translateX(3px)';
+                    newEl.querySelectorAll('*').forEach(c => c.style.color = hover.color);
+                });
+                newEl.addEventListener('mouseleave', () => {
+                    if (document.documentElement.getAttribute('data-theme') !== 'light') return;
+                    newEl.style.backgroundColor = base.bg;
+                    newEl.style.color = base.color;
+                    newEl.style.transform = '';
+                    newEl.querySelectorAll('*').forEach(c => c.style.color = base.color);
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            _indexPatch(document.documentElement.getAttribute('data-theme') === 'light');
+        });
+    </script>
+
+    <!-- Study Tracker Modal - hidden initially, populated by showStudyTracker() on "Study Now" click -->
+    <div id="study-tracker-modal-container"></div>
+</body>
+
+<!-- ── Sources Drawer ─────────────────────────────────────────────────── -->
+<div id="sources-drawer" role="dialog" aria-label="Retrieved Sources">
+    <div id="sources-drawer-header">
+        <h3>
+            <span class="material-symbols-outlined" style="font-size:14px;vertical-align:-2px;margin-right:4px;">database</span>
+            Retrieved Sources
+        </h3>
+        <button id="sources-drawer-close" onclick="closeSources()" title="Close">✕</button>
+    </div>
+    <div id="sources-drawer-body">
+        <p style="font-size:0.75rem;color:rgba(208,149,255,0.4);text-align:center;margin-top:2rem;">
+            No sources loaded yet.
+        </p>
+    </div>
+</div>
+
+<script>
+    // ── Sources Drawer controller ──────────────────────────────────────────────
+    (function () {
+        let _activeTriggerBtn = null;
+
+        window.openSources = function (sources, triggerBtn) {
+            const drawer = document.getElementById('sources-drawer');
+            const body   = document.getElementById('sources-drawer-body');
+
+            // Deactivate previously active trigger
+            if (_activeTriggerBtn && _activeTriggerBtn !== triggerBtn) {
+                _activeTriggerBtn.classList.remove('active');
+            }
+
+            // If clicking the same button again → close
+            if (_activeTriggerBtn === triggerBtn && drawer.classList.contains('open')) {
+                closeSources();
+                return;
+            }
+
+            _activeTriggerBtn = triggerBtn;
+            if (triggerBtn) triggerBtn.classList.add('active');
+
+            // Populate drawer
+            if (!sources || sources.length === 0) {
+                body.innerHTML = `<p style="font-size:0.75rem;color:rgba(208,149,255,0.35);text-align:center;margin-top:2rem;">No source chunks found for this response.</p>`;
+            } else {
+                body.innerHTML = sources.map((s, i) => {
+                    const isWeb   = s.type === 'web';
+                    const badge   = isWeb
+                        ? `<span class="source-badge web"><span class="material-symbols-outlined" style="font-size:10px">language</span>Web</span>`
+                        : `<span class="source-badge textbook"><span class="material-symbols-outlined" style="font-size:10px">menu_book</span>Textbook</span>`;
+                    const urlRow  = (isWeb && s.url)
+                        ? `<a href="${escHtml(s.url)}" target="_blank" rel="noopener" class="source-url">${escHtml(s.url)}</a>`
+                        : '';
+                    const snippet = s.snippet ? escHtml(s.snippet) : '';
+                    return `
+                        <div class="source-card">
+                            ${badge}
+                            <div class="source-title">${escHtml(s.title || 'Source ' + (i + 1))}</div>
+                            ${snippet ? `<div class="source-snippet">${snippet}</div>` : ''}
+                            ${urlRow}
+                        </div>`;
+                }).join('');
+            }
+
+            drawer.classList.add('open');
+        };
+
+        window.closeSources = function () {
+            const drawer = document.getElementById('sources-drawer');
+            drawer.classList.remove('open');
+            if (_activeTriggerBtn) {
+                _activeTriggerBtn.classList.remove('active');
+                _activeTriggerBtn = null;
+            }
+        };
+
+        // Close drawer when clicking outside (on the chat area)
+        document.addEventListener('click', function (e) {
+            const drawer = document.getElementById('sources-drawer');
+            if (!drawer.classList.contains('open')) return;
+            if (!drawer.contains(e.target) && !e.target.closest('.sources-trigger-btn')) {
+                closeSources();
+            }
+        });
+
+        function escHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;');
+        }
+    })();
+</script>
+
+</html>

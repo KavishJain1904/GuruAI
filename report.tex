@@ -1,0 +1,1431 @@
+%============================================================
+%  Context-Aware Adaptive Tutoring System using RAG
+%  B.Tech Project Report — LNMIIT, Jaipur, April 2026
+%  Authors : Ekansh Chauhan (23UCS575) & Kartik Singh (23UCS611)
+%============================================================
+
+\documentclass[11pt, a4paper, oneside]{report}
+
+%------------------------------------------------------------
+% PACKAGES
+%------------------------------------------------------------
+\usepackage[a4paper, top=1in, bottom=1in, left=1.25in, right=1in]{geometry}
+\usepackage[utf8]{inputenc}         % UTF-8 input
+\usepackage{lmodern}          % Scalable fonts
+\usepackage{mathptmx}         % Times New Roman for text and math
+\usepackage{amsmath}          % Math environments
+\usepackage{amssymb}          % Math symbols
+\usepackage{graphicx}         % \includegraphics
+\usepackage{float}            % [H] placement
+\usepackage{booktabs}         % Professional tables (\toprule etc.)
+\usepackage{multirow}         % Multi-row table cells
+\usepackage{array}            % Extended column specs
+\usepackage{longtable}        % Tables spanning pages
+\usepackage{caption}          % Customise captions
+\usepackage{subcaption}       % Sub-figures
+\usepackage{enumitem}         % Customise lists
+\usepackage{setspace}         % Line spacing
+\usepackage{parskip}          % Paragraph spacing instead of indent
+\usepackage{titlesec}         % Section heading formatting
+\usepackage{fancyhdr}         % Headers and footers
+\usepackage{hyperref}         % Hyperlinks + PDF bookmarks
+\usepackage{url}              % Typeset URLs
+\usepackage{xcolor}           % Colours
+\usepackage{tocbibind}        % Add Bibliography to TOC
+\usepackage{tocloft}          % Customise TOC/LOF/LOT
+\usepackage{listings}         % Code listings
+\usepackage{microtype}        % Microtypographic improvements
+\usepackage{indentfirst}      % Indent first paragraph of each section
+\usepackage[T1]{fontenc}
+
+%------------------------------------------------------------
+% HYPERREF SETUP
+%------------------------------------------------------------
+\hypersetup{
+    colorlinks  = true,
+    linkcolor   = black,
+    citecolor   = black,
+    urlcolor    = blue,
+    pdftitle    = {Context-Aware Adaptive Tutoring System using RAG},
+    pdfauthor   = {Ekansh Chauhan, Kartik Singh},
+    pdfsubject  = {B.Tech Project Report},
+    bookmarksnumbered = true,
+    bookmarksopen     = true,
+}
+
+%------------------------------------------------------------
+% TYPOGRAPHY
+%------------------------------------------------------------
+\setstretch{1.15}              % reduced line spacing
+\setlength{\parindent}{1.5em}  % Paragraph indent
+\setlength{\parskip}{4pt}      % Space between paragraphs
+
+%------------------------------------------------------------
+% PAGE STYLE
+%------------------------------------------------------------
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\leftmark}
+\fancyhead[R]{\small LNMIIT, Jaipur}
+\fancyfoot[C]{\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\renewcommand{\footrulewidth}{0.4pt}
+
+% Plain style (chapter opening pages)
+\fancypagestyle{plain}{
+  \fancyhf{}
+  \fancyfoot[C]{\thepage}
+  \renewcommand{\headrulewidth}{0pt}
+  \renewcommand{\footrulewidth}{0.4pt}
+}
+
+%------------------------------------------------------------
+% SECTION HEADING STYLES
+%------------------------------------------------------------
+\titleformat{\chapter}[display]
+  {\normalfont\LARGE\bfseries}{\chaptertitlename\ \thechapter}{12pt}{\LARGE\bfseries}
+\titlespacing*{\chapter}{0pt}{20pt}{14pt}
+
+\titleformat{\section}{\normalfont\large\bfseries}{\thesection}{1em}{}
+\titlespacing*{\section}{0pt}{12pt}{6pt}
+
+\titleformat{\subsection}{\normalfont\normalsize\bfseries}{\thesubsection}{1em}{}
+\titlespacing*{\subsection}{0pt}{8pt}{4pt}
+
+\titleformat{\subsubsection}{\normalfont\normalsize\bfseries\itshape}{\thesubsubsection}{1em}{}
+\titlespacing*{\subsubsection}{0pt}{6pt}{3pt}
+
+%------------------------------------------------------------
+% TABLE OF CONTENTS CUSTOMISATION
+%------------------------------------------------------------
+\renewcommand{\cftchapfont}{\bfseries}
+\renewcommand{\cftchappagefont}{\bfseries}
+\setlength{\cftbeforechapskip}{6pt}
+\setlength{\cftbeforesecskip}{3pt}
+
+%------------------------------------------------------------
+% CAPTION STYLE
+%------------------------------------------------------------
+\captionsetup{
+  font       = small,
+  labelfont  = bf,
+  labelsep   = colon,
+  justification = centering,
+}
+
+%------------------------------------------------------------
+% LISTINGS (code) — not required by report but included
+%------------------------------------------------------------
+\lstset{
+  basicstyle   = \ttfamily\small,
+  breaklines   = true,
+  frame        = single,
+  numbers      = left,
+  numberstyle  = \tiny\color{gray},
+  keywordstyle = \color{blue}\bfseries,
+  commentstyle = \color{green!50!black},
+  stringstyle  = \color{red!70!black},
+}
+
+%------------------------------------------------------------
+% CUSTOM COMMANDS
+%------------------------------------------------------------
+\newcommand{\lnmiit}{The LNM Institute of Information Technology}
+% Retain existing figures when available; otherwise reserve labelled space.
+\newcommand{\reportimage}[2][0.85\textwidth]{%
+  \IfFileExists{#2}{\includegraphics[width=#1]{#2}}{%
+    \fbox{\parbox[c][4cm][c]{\dimexpr#1-2\fboxsep-2\fboxrule\relax}{%
+      \centering\small Figure placeholder\\[6pt]
+      \texttt{\detokenize{#2}}\\[6pt]
+      Insert the figure described in the caption.}}}}
+
+
+%============================================================
+% DOCUMENT START
+%============================================================
+\begin{document}
+
+%------------------------------------------------------------
+% FRONT MATTER (Roman numerals)
+%------------------------------------------------------------
+\pagenumbering{roman}
+\setcounter{page}{1}
+
+%------------------------------------------------------------
+% TITLE PAGE
+%------------------------------------------------------------
+\begin{titlepage}
+  \centering
+  \vspace*{0.5cm}
+
+  {\Large\bfseries Context-Aware Adaptive Tutoring System using Retrieval-Augmented\\[6pt]
+   Generation (RAG)\par}
+
+  \vspace{1.5cm}
+  Project report submitted in partial fulfillment\\
+  of the requirements for the degree of\par
+
+  \vspace{1.5cm}
+  Bachelor of Technology\\
+  in\\
+  Computer Science Engineering\par
+
+  \vspace{1.5cm}
+  By\par
+
+  \vspace{1cm}
+  Ekansh Chauhan - 23UCS575\\[2pt]
+  Kartik Singh - 23UCS611\par
+
+  \vspace{1.5cm}
+  Under guidance of\\[2pt]
+  Dr.\ Gaurav Verma\par
+
+  \vspace{1.5cm}
+  % Make sure the image file is in the same directory as your .tex file
+  \reportimage[5.5cm]{image/lnmiit.png}\par
+  \vspace{1.2cm}
+
+  Department of Computer and Communication Engineering\\
+  \lnmiit, Jaipur\\
+  April 2026\par
+\end{titlepage}
+
+%------------------------------------------------------------
+% COPYRIGHT PAGE
+%------------------------------------------------------------
+\newpage
+\thispagestyle{plain}
+\vspace*{\fill}
+\begin{center}
+  \copyright\ \textbf{\lnmiit}, Jaipur -- 2026.\\[4pt]
+  All rights reserved.
+\end{center}
+
+%------------------------------------------------------------
+% CERTIFICATE
+%------------------------------------------------------------
+\newpage
+\thispagestyle{plain}
+\begin{center}
+  \vspace*{1cm}
+  {\large\bfseries \lnmiit\\Jaipur, India}\\[2cm]
+  {\large\bfseries CERTIFICATE}
+\end{center}
+
+\vspace{1cm}
+\noindent This is to certify that the project entitled Context-Aware Adaptive Tutoring System using Retrieval-Augmented Generation (RAG) , submitted by Ekansh Chauhan (23UCS575), Kartik Singh (23UCS611) in partial fulfillment of the requirement of degree in Bachelor of Technology (B. Tech), is a bonafide record of work carried out by them at the Department of Computer and Communication Engineering, \lnmiit, Jaipur, (Rajasthan) India, during the academic session 2026--2027 under my supervision and guidance and the same has not been submitted elsewhere for award of any other degree. In my/our opinion, this report is of standard required for the award of the degree of Bachelor of Technology (B. Tech).
+
+\vspace{3cm}
+\noindent
+\begin{tabular*}{\textwidth}{@{} c @{\extracolsep{\fill}} c @{}}
+  \rule{4cm}{0.4pt} & \rule{7cm}{0.4pt} \\[4pt]
+  Date & Adviser: Dr.\ Gaurav Verma \\
+\end{tabular*}
+
+%------------------------------------------------------------
+% ACKNOWLEDGEMENTS
+%------------------------------------------------------------
+\newpage
+\thispagestyle{plain}
+\chapter*{Acknowledgements}
+\addcontentsline{toc}{chapter}{Acknowledgements}
+
+We would like to express our sincere gratitude to \textbf{Dr.\ Gaurav Verma}.
+His continuous guidance and encouragement were a lifeline throughout this
+project.  We would also like to thank\textbf{ Dr. Ashish Kumar Dwivedi} who was the comentor for our BTP. More than just helpful, their thoughtful feedback has been fundamental
+to our learning and growth.
+
+We also thank our college and professors. They have fostered an
+incredible environment that allowed us to explore and develop this work truly.
+
+We would also like to thank our families and friends, thank you from the bottom of our heart.
+Your patience, your motivation and your unwavering belief in us made all
+the difference during the challenging times.
+
+This project is built on the support we received from everyone, and we are
+sincerely thankful to all who contributed.
+
+%------------------------------------------------------------
+% ABSTRACT
+%------------------------------------------------------------
+\newpage
+\thispagestyle{plain}
+\chapter*{Abstract}
+\addcontentsline{toc}{chapter}{Abstract}
+
+Large Language Models (LLMs) offer new possibilities for personalised education, but a general-purpose chatbot does not automatically connect its responses to a student's course material or maintain a detailed record of learning progress. This project develops a Context-Aware Adaptive Tutoring System using Retrieval-Augmented Generation (RAG), combining document-based question answering with persistent learner memory and topic-level assessment.
+
+The earlier implementation established document-grounded tutoring, interactive quizzes, and a dual-memory model consisting of qualitative user preferences and a quantitative Knowledge Profile. The current semester extends this foundation with a subject-wise curriculum knowledge graph, prerequisite-aware learning guidance, and a spaced-repetition review workflow. Topic mastery is updated through an exponential moving average, while a rule-based scheduler assigns review dates using mastery categories and consecutive successful review events. A review dashboard and persistent event history make these updates inspectable.
+
+The current architecture uses FastAPI, LangChain, and PostgreSQL with pgvector. Hybrid retrieval combines dense vector search and TF--IDF ranking, followed by a relevance-grading stage. Groq-hosted generation produces explanations and quizzes, while Gemini services provide embeddings and retrieval grading. A separate learning advisor combines the learner profile with curriculum prerequisites to guide the depth and pacing of answers. The knowledge graph supports personalisation and review ordering; document evidence is still retrieved through the hybrid text-retrieval pipeline.
+
+The implementation also contains an optional web-search fallback when retrieved course material is rejected as irrelevant. This remains a conditional integration because its search dependency is not installed in the inspected environment. Functional checks support the implemented tracking and scheduling behaviour, while controlled measurements of answer quality and long-term learning gains remain future evaluation work.
+
+% \vspace{0.5cm}
+% \noindent\textbf{Keywords:} Retrieval-Augmented Generation, Intelligent
+% Tutoring Systems, Adaptive Learning, Large Language Models, FAISS, Dual-Memory
+% Personalisation.
+
+%------------------------------------------------------------
+% TABLE OF CONTENTS
+%------------------------------------------------------------
+\newpage
+\tableofcontents
+
+%------------------------------------------------------------
+% LIST OF FIGURES
+%------------------------------------------------------------
+\newpage
+\listoffigures
+% \addcontentsline{toc}{chapter}{List of Figures}
+
+%------------------------------------------------------------
+% LIST OF TABLES
+%------------------------------------------------------------
+\newpage
+\listoftables
+% \addcontentsline{toc}{chapter}{List of Tables}
+
+%------------------------------------------------------------
+% LIST OF ABBREVIATIONS
+%------------------------------------------------------------
+\newpage
+\chapter*{List of Abbreviations}
+\addcontentsline{toc}{chapter}{List of Abbreviations}
+
+\begin{tabular}{@{}ll@{}}
+  \toprule
+  \textbf{Abbreviation} & \textbf{Full Form} \\
+  \midrule
+  AI     & Artificial Intelligence \\
+  API    & Application Programming Interface \\
+  BART   & Bidirectional and Auto-Regressive Transformers \\
+  DPR    & Dense Passage Retrieval \\
+  EMA    & Exponential Moving Average \\
+  CRAG   & Corrective Retrieval-Augmented Generation \\
+  KG     & Knowledge Graph \\
+  RRF    & Reciprocal Rank Fusion \\
+  SRS    & Spaced Repetition System \\
+  TF--IDF & Term Frequency--Inverse Document Frequency \\
+  FAISS  & Facebook AI Similarity Search \\
+  JSON   & JavaScript Object Notation \\
+  LLM    & Large Language Model \\
+  LMS    & Learning Management System \\
+  NLP    & Natural Language Processing \\
+  RAG    & Retrieval-Augmented Generation \\
+  REST   & Representational State Transfer \\
+  SSE    & Server-Sent Events \\
+  TTFT   & Time-to-First-Token \\
+  UI     & User Interface \\
+  VLM    & Vision-Language Model \\
+  \bottomrule
+\end{tabular}
+
+%============================================================
+% MAIN MATTER (Arabic numerals)
+%============================================================
+\newpage
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+%============================================================
+% CHAPTER 1 — INTRODUCTION
+%============================================================
+\chapter{Introduction}
+
+\section{Area of Work}
+
+The project develops ``Study AI'' (GuruAI), a web-based tutoring system that combines Retrieval-Augmented Generation with persistent learner personalisation. Uploaded course documents provide contextual evidence, while topic-level quiz performance and user preferences guide explanations across sessions. The work lies at the intersection of information retrieval, educational interfaces, and learner modelling.
+
+The current semester builds on the earlier document-chat and quiz workflow by adding curriculum prerequisites and scheduled revision. These additions connect a learner's current question, recorded mastery, and next review activity. The project integrates established methods into a demonstrable tutoring workflow; it does not propose a newly trained language model or a validated cognitive diagnosis algorithm.
+
+\section{Problems Addressed}
+
+\subsection{Hallucination}
+LLMs provide a confident response based on their training data. However, without any
+fact-checking, they ``hallucinate'' facts that aren't true by making them sound right. For
+instance, in any query, if it doesn't know the direct or exact reference of the topic it tries to
+relate it with any similar sounding topic and generate a response, which could cause the
+students to run around with false information. Because LLMs don't have any outside
+verification, leads to a big problem that makes people less trusting on the knowledge part.
+
+\subsection{Lack of Grounding/Sources}
+LLMs never tell where they got their reference or info from, so we can't tell if it's from the textbook or any random web scraps (without verification). This absence of knowledge and hiding mistakes makes it harder to check with class notes, making study feel like a guessing game.
+
+\subsection{No Long-Term User Memory}
+The model "forgets" everything right after each chat, thus keeping no history. Same response across sessions can be disturbing as it keeps giving the same explanation without knowing any student preferences or their weak parts.
+
+\subsection{Fixed Difficulty Level}
+Responses are on constant level making it hard for student to learn more and is so much for a new to the topic. There is no update for repeated failures (like not being able to understand the same topic but still getting the same explanation) or progress report. It feels more like a robot than a tutor.
+
+\subsection{Blind Retrieval (Always-On RAG Issues)}
+Collecting each document for every new query gets to wastage of processing power on small things or fails at multihop searching that needs to be done regularly. There are several queries in world like simple such as no retrieve, medium such as oneshot and complex such as multistep. It's not best to treat them all the same.
+
+\subsection{Vulnerability to Irrelevant Context}
+Retrieval can return noisy or mixed chunks that distract the answer-generation model. LLMs get wrong parts of lectures mixed up with the answers
+when there is any distraction and having no brain to filter or identify correctly.
+
+\section{Existing Systems}
+
+Present intelligent tutoring systems and LLM-based chatbots have made great progress in solving the problems that come with AI-assisted education. A study of current systems shows that there are a lot of new ideas and can be shown into three main groups:
+
+\vspace{0.3cm}
+\noindent\textbf{1. Personalization and Learner Categorization Systems}
+
+Many present systems have usefully integrated personalization into the learning experience. For example, "MyLearning Talk" [5] personalizes RAG results by using onboard forms to know how students like to learn. This static method works well for setting things up at first, but may not fully show how a learner’s skills changing over time. Platforms like "LPI Tutor" [6] also use "Learner Aware" tracking by putting students into broad groups like "beginner" or "advanced", giving you a good base to change the difficulty of the response, but it often doesn't have the level of detail needed for very technical subjects as for a student's knowledge can vary a lot from one syllabus topic to other.
+
+\vspace{0.3cm}
+\noindent\textbf{2. Query-Centric and Fine-Tuned Architectures}
+
+Researchers came up with strong architectural solutions to handle complex queries and making sure the facts are right. Systems that use the "Adaptive RAG" [9] framework can change their retrieval strategy (for example, from single step to multi step) based on hardness of the question. Making the best use of computer resources, but it focuses more on the query than what is the user thinking right now. Also, systems that want to reach expert level domain accuracy, like the "ShennongMGS" [3] medical guidance model, get very short results by fine-tuning open-source models on structured knowledge graphs. This method is very sound, but it isn't very flexible for universities where course syllabus change often as it needs a lot of computing power.
+
+\vspace{0.3cm}
+\noindent\textbf{3. Pedagogical Frameworks and State Mapping}
+
+Recent studies have greatly illustrated the pedagogical reasoning abilities of LLMs. Frameworks like "Physics STAR"[8] encourage deep learning by letting students make active analyse of their mistakes and work together in structured ways. But to get this type of help, the learner often has to format their questions by hand using strict structures, making the user experience even more complex. Other models have successfully correlated intricate "student states" with particular tutoring actions [7], demonstrating superior pedagogical reasoning. But these are often used to label offline datasets instead of making an interactive, real-time RAG environment.
+
+These existing systems have useful and effective features in their own areas, but there is still a chance to combine their strengths. Chapter 2 gives a detailed review of the literature on these specific works. Chapter 3 then explains how our proposed system plans to bring up realtime subtopic tracking, automated prompt elaboration and dynamic syllabus bounding.
+
+%============================================================
+% CHAPTER 2 — LITERATURE SURVEY
+%============================================================
+\chapter{Literature Survey}
+\label{ch:lit_survey}
+
+\section{Retrieval-Augmented Generation for Knowledge-Intensive NLP Tasks
+         (Lewis et al., 2020) [1]}
+
+This paper lays the fundamentals for building language models that can overcome the fixed memory limits and factual errors coming with the traditional pre-trained models. The researchers focused on the introduction of the Retrieval-Augmented Generation (RAG) framework, a method that integrates the generative strengths of parametric models (such as BART) with a non-parametric dense vector index by including external documents. 
+
+This reduces hallucination making the response generation grounded in external evidence retrieved earlier. It is also great at tasks which requires intense knowledge like open-domain question answering. This paper focuses on showing that the LLMs don't need to just rely on themselves to answer the questions correctly but also to take help from external documents. 
+
+At last, this model was only about getting open-domain retrieval. The model answers single questions just using facts. But didn't work at user interaction for profiling or to work upon the specific ways of teaching for a better tutor role.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.8\textwidth]{image/LS1.png}
+  \caption[Overview of the Lewis et al.\ (2020) RAG approach]%
+         {Overview of the paper's approach.}
+  \label{fig:lewis_rag}
+\end{figure}
+
+\section{Towards Effective Teaching Assistants: From Intent-Based Chatbots to
+         LLM-Powered Teaching Assistants (Alsafari et al., 2024) [2]}
+
+This work looked at the change from old, rule-based chatbots to dynamic LLM teaching
+assistants adapting the basic knowledge of RAG for a specific educational setting. The
+researchers put the outcome based Amazon Alexa teaching skills against a modern system
+that used LangChain framework and FAISS vector databases to get context for the response
+straight from PDF textbooks. They were successful in showing that RAG gets rid of the need
+for fixed old methods of hard-coded response generation and could handle student queries
+that are presented in different ways based directly on their course materials.
+
+But here the researchers pointed out a big problem with their execution, the system didn't have any kind of
+adaptive measures. It worked just like a search engine that gave a look of a chatbot, giving
+each user the same, ``one-size-fits-all'' response depth. It didn't change its way of teaching,
+responding or how long to explain something at all based on how well a student was doing or
+how much they were knowing.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.7\textwidth]{image/LS2.png}
+  \caption[Chain structure of the Alsafari et al.\ (2024) approach]%
+         {Overview of the paper's approach, chain structure.}
+  \label{fig:alsafari_chain}
+\end{figure}
+
+\section{ShennongMGS: An LLM-Based Chinese Medication Guidance System
+         (Dou et al., 2025) [3]}
+
+The architects of this very sophisticated Medical LLM Architecture recognized that there was
+a great demand in the industry for a high level of Domain Accuracy and Professional
+Instructional Content without the risk of Hallucinations. As such, the researchers were tasked
+with developing a pharmacist professional system through heavy fine-tuning of an
+Open-Source Model (ChatGLM-6B), using a large Structured Knowledge Graph. To make
+the model's medical knowledge never go outdated, the researchers added a Live Web Crawler
+to keep on updating the system's repository. 
+
+This study compared how well this approach performed when compared to other approaches, 
+while highlighting the major Architectural Drawbacks of employing Model Fine-Tuning as an Educational Tool. 
+Though this method produced responses with great accuracy, it's an extremely Heavy Computational Way, has a
+Fixed Structural Design, and required Centralized Data Updates. 
+
+Most importantly, it misses the flexibility required in a University Environment that changes its Course Syllabus
+constantly, highly specific and varies greatly from professor to professor. Furthermore,
+employing a separate model for each Course Requirement would be Unscalable and Highly
+Inefficient.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.75\textwidth]{image/LS3.png}
+  \caption[ShennongMGS training workflow (Dou et al., 2025)]%
+         {The workflow of our ShennongMGS training design.}
+  \label{fig:shennong}
+\end{figure}
+
+\section{Intelligent Tutoring Agent with Retrieval-Augmented Generation
+         (Ye, 2025) [4]}
+
+The fine-tuning process required by the Medical Model was very different from the relatively
+lightweight cost of using the RAG Architecture for domain specific questions. This project
+created an agent for quality management in college classes as well as utilized both dual
+chunking and query augmentation to create questions with answers based on class material.
+
+The use of RAG demonstrated its ability to deal with queries that are significantly
+domain-specific as well as automatically generating quizzes based upon class content;
+however, the agent had no method to follow the development of the student's knowledge over
+time. Each question posed to the agent was treated completely independently. When the agent
+answered a question correctly and then moved on to another question it totally forgot about
+their previous interaction.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.75\textwidth]{image/LS4.png}
+  \caption[Overview of the Ye (2025) RAG-based tutoring agent]%
+         {Overview of the paper's approach.}
+  \label{fig:ye_agent}
+\end{figure}
+
+\section{MyLearningTalk: Developing a Generative AI-Powered Intelligent
+         Tutoring System (Chizzola, 2024) [5]}
+
+This research was required by an expressed need for a persistent user-profile, and it investigated methods to personalize the RAG tutoring experience. The researcher created MyLearningTalk (MLT) using advanced document processing techniques to allow for formatting of documents in pdf and latex formats. This allowed for the use of a static on-boarding questionnaire that students would fill out themselves regarding education level, preferred style of learning, and personal interests, which would be used to inject information about the students into the system prompts.
+
+However, there were serious limitations with the approach taken to provide static personalization to the RAG tutoring platform, including the inability to recognize real time cognitive development. Additionally, because self-reported preferences do not typically reflect a learner's true proficiency in engineering or scientific disciplines as they evolve over time, the potential for personalization is superficial.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.6\textwidth]{image/LS5.png}
+  \caption[Attention weight visualisation from Chizzola (2024)]%
+         {Attention weights visualized.}
+  \label{fig:mlt_attention}
+\end{figure}
+
+\section{LPI Tutor: LLM-Based Personalised Intelligent Tutoring System
+         using RAG and Prompt Engineering [6]}
+
+Unlike old fixed assessment forms filled by the user at the entry only, the Learner Aware
+System implemented a new type of tracking called ``Learner Aware'' which used different
+prompts based upon everyone's level of ability. Researchers tried to create automatic changes
+in the RAG generated responses reflecting whether a student was classified as a beginner,
+intermediate or advanced learner by examining their past conversation and changing the
+language difficulty accordingly. 
+
+Although it attempted to modify its tone with respect to each
+individual student as they engaged with the system, its implementation of personalization was
+so broadly defined that it failed to meet the needs of students at a high-technical educational
+institution. More specifically, the system lacked the fine-grained, subtopic-specific tracking
+needed for complex subjects. Assessing a student's overall skill set as merely ``intermediate''
+across an entire subject is extremely inefficient; a student could have mastered one section of
+the curriculum (and thus demonstrate advanced skills) yet still require basic, introductory
+knowledge of other sections of the curriculum.
+
+\section{Using ChatGPT to Annotate a Dataset: A Case Study in Intelligent
+         Tutoring Systems (Vujinović et al., 2023) [7]}
+
+To allow the instructors to teach according to their ``model,'' the authors created a detailed
+correlation of very specific ``states'' for students (prior knowledge level, amount of time spent
+on a task, etc.) with 17 different possible tutor actions. This allowed the pedagogical logic in
+the system to determine if a learner needed simply a gentle nudge toward the correct solution,
+or instead, a complete refresher of the appropriate theoretical basis. 
+
+The study provided a full
+view of what a learner would require by using pedagogic logic to analyse a learner's needs;
+however, as the LLM was trained and tested outside of an operational environment and only
+worked with pre-existing static data files that had been annotated by researchers for training
+of traditional machine learning algorithms, the complex mapping of state to action did not
+provide a dynamic, real-time RAG. Thus, there is a significant gap between potential and
+actual use.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.8\textwidth]{image/LS7.png}
+  \caption[Workflow for annotating the dataset (Vujinović et al., 2023)]%
+         {An overview of the workflow of generating a list of actions and annotating the dataset.}
+  \label{fig:vujinovic}
+\end{figure}
+
+\section{Beyond Answers: LLM-Powered Tutoring System in Physics Education
+         (Jiang \& Jiang, 2024) [8]}
+
+This paper introduced the ``Physics-STAR'' framework, which seeks to incorporate active
+pedagogical logic into direct student interactions. The researchers created interactions that
+explicitly promoted deep learning through active error analysis, requiring the AI to engage in
+a rigorous cycle of explanation and review following a student's incorrect response, rather
+than simply providing the correct answer. 
+
+The system's biggest flaw was that it relied too
+much on users to make prompts. The system didn't have an automated backend that could
+change prompts. Instead, it made the learner do a lot of extra work by making them format
+their questions by hand using a strict STAR (Situation, Task, Action, Result) structure in
+order to get the right help with their learning.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.65\textwidth]{image/LS8.png}
+  \caption[Physics-STAR framework (Jiang \& Jiang, 2024)]%
+         {The framework of Physics-STAR.}
+  \label{fig:physics_star}
+\end{figure}
+
+\section{Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large
+         Language Models through Question Complexity [9]}
+
+This study showed that a learning management system can use artificial intelligence to
+change how it answers students' questions about physics topics in real time. ``Adaptive-RAG''
+was the name of the first new tool. Depending on how hard the question is, this tool will give
+you different answers to the same question. For instance, the system might need to take a few
+steps to get the right answer when it is trying to solve a hard problem. On the other hand,
+when answering easy problems, the system may only need one step.
+
+To determine whether a question should have many steps toward finding an answer or just
+one, the system will use what is referred to as a classifier. A classifier is essentially another
+computer program which will help identify what type of problem a student has asked. When
+identifying the type of problem, it will also determine whether the question requires multiple
+steps to solve the problem. Once identified, the system will either search for a solution in a
+very basic format or go ahead and attempt to find a solution in a much longer and more
+detailed format.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.85\textwidth]{image/LS9.png}
+  \caption[Adaptive-RAG: single-step vs.\ multi-step vs.\ adaptive approaches]%
+         {Comparison of (A) single-step, (B) multi-step, and
+          (C) adaptive retrieval strategies in Adaptive-RAG.}
+  \label{fig:adaptive_rag}
+\end{figure}
+
+\section{ISOLATEGPT: An Execution Isolation Architecture for LLM-Based
+         Agentic Systems (Wu et al., 2025) [10]}
+
+Lastly, to create a system that can track automatically the student states, evaluating these
+states to change the prompts dynamically at the backend without any input from the user,
+system security must be improved. This paper examined the significant vulnerabilities of
+multi-agent LLM environments, highlighting that shared memory spaces often result in data
+leakage, prompt injection, or the circumvention of fundamental system directives. The
+researchers suggested a hub-and-spoke design that would keep each agent and memory
+module separate from the others. 
+
+This underscores a significant infrastructural deficiency in
+contemporary research concerning an advanced educational platform: an AI tutor overseeing
+distinct, granular tracking databases that categorise a student's performance metrics into
+strong, moderate, and weak categories is entirely insecure if those databases are not properly
+isolated. Each execution must be isolated to keep user profiles from getting mixed up and to
+keep the tracking loop always right.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.7\textwidth]{image/LS10.png}
+  \caption[ISOLATEGPT hub-and-spoke architecture (Wu et al., 2025)]%
+         {ISOLATEGPT's architecture in action.}
+  \label{fig:isolategpt}
+\end{figure}
+
+
+\section{Corrective Retrieval Augmented Generation) [11]}
+
+Corrective Retrieval Augmented Generation improves the robustness of retreival by having pre-check on each of the document being retreived by the Retreiver. Once the retreiver retreives the top-K documents, the documents would be fed into a LLM which would give a score based on how close the document is actually to the query that the User has asked. If the score passes a certain threshold, the model is allowed to access them for response , otherwise the document is removed. 
+
+
+If serveral such documents are removed in the process, a RAG Model is asked to go for web scraping to find out relevant information regarding the User's query. The Checker LLM also divides the documents into strips , removing irrelevant content from the documents. Hence, the final document that is sent to the Model is completely related to the User query
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.7\textwidth]{image/CRAG.png}
+  \caption[Corrective Retrieval Augmented Generation]%
+         {Corrective Retrieval Augmented Generation in action.}
+  \label{fig:isolategpt-2}
+\end{figure}
+       
+
+%============================================================
+% CHAPTER 3 — RESEARCH GAPS AND NOVELTY
+%============================================================
+\chapter{Research Gaps and Novelty of the Proposed System}
+\label{ch:novelty}
+
+\section{Identified Research Gaps}
+
+After examining the existing literature identify three significant gaps in the application of Retrieval Augmented Generation (RAG) and Large Language Models (LLMs) within intelligent tutoring systems:
+
+\vspace{0.3cm}
+\noindent\textbf{Lack of Dynamic, Granular Knowledge Tracking:} Static onboarding questionnaires or too broad categories (like calling all students "beginners"). Treating students like blank slates at the start of each new session and don't keep track of how their cognitive growth on certain subtopics changes over time.
+
+\vspace{0.3cm}
+\noindent\textbf{Query-Centric Rather Than Learner-Centric Adaptation:} Current automated frameworks alter their answers based on how hard the question is, not how well the student has done in the past. This results in ineffective, "one size fits all" teaching. Also, systems that do use advanced pedagogical logic often put all of the responsibility for strict prompt writing on the user.
+
+\vspace{0.3cm}
+\noindent\textbf{Unbounded Autonomous Assessment:} It’s hard for a Generic LLMs to grade student’s knowledge or making quizzes without making things up. To get this level of accuracy, you need a lot of computing power and fine tuning that is too strict for university syllabus changing all the time. There is an urgent need for systems that strictly limit the teaching and testing phases to a syllabus that the user has defined.
+
+\section{Novelty of the Proposed System}
+
+The contribution of the proposed system is the integration of document-grounded interaction, persistent topic-level learner state, and a practical review workflow within a single application. The reviewed studies motivate these design choices; the project does not claim that adaptive tutoring or knowledge-graph personalisation is unique to this implementation.
+
+\subsection*{1.\ Persistent Granular Knowledge Tracking}
+Session quizzes are generated from sampled excerpts of uploaded documents and carry subject and topic labels. Their answers update a user-specific Knowledge Profile using an exponential moving average. Weak, Average, and Strong are categories of records in one database table, rather than separate databases. Topic-page quizzes provide an additional revision route, although these are generated from the topic and mastery prompt without retrieving uploaded documents.
+
+\subsection*{2.\ Prerequisite-Aware Adaptive Elaboration}
+The second-semester implementation adds a curriculum knowledge graph and a dedicated learning-guidance step. The advisor receives the question, mastery summary, and subject prerequisites and produces a short briefing for the answer generator. This enables the tutor to request a foundational explanation when a prerequisite is weak or unproven. The briefing is an LLM-generated recommendation, not a verified diagnosis of the cause of a student's difficulty.
+
+\subsection*{3.\ Assessment Linked to Scheduled Revision}
+Quiz answers and manual review ratings update mastery, the next review date, and an event history in a single transaction. The review queue orders due topics and can place a weak prerequisite before a weak dependent topic already in that queue. This extends the earlier passive mastery display into a user-initiated cycle of assessment, review, and progress inspection.
+
+\subsection*{4.\ Traceable Retrieval and Conditional Fallback}
+Hybrid retrieval, relevance grading, and source metadata connect chat answers to the passages supplied to the generator. An optional web-search branch extends the earlier external-workflow proposal, but does not provide peer-reviewed source verification or unrestricted autonomous tool use. These mechanisms support source inspection without guaranteeing that every generated statement is correct.
+
+%============================================================
+% CHAPTER 4 — PROPOSED WORK
+%============================================================
+\chapter{Proposed Work}
+
+\section{System Overview}
+
+The proposed system combines RAG-based document question answering with persistent learner memory. The current implementation extends the previous semester's tutoring and assessment workflow with a curriculum map, prerequisite-aware guidance, and scheduled revision. The following sections describe the implemented system and state the boundaries of features that remain partial.
+
+\subsection{Progress from the Previous Semester}
+\begin{table}[H]
+\centering\small
+\caption{Progress on the previous semester's Future Work}
+\label{tab:semester_progress}
+\begin{tabular}{@{}p{3.0cm} p{2.4cm} p{7cm}@{}}
+\toprule
+\textbf{Earlier proposal} & \textbf{Current status} & \textbf{Demonstrable scope} \\
+\midrule
+Multimodal interaction & Future work & Text extraction from PDF, TXT, and DOCX; no image understanding or speech interface. \\[5pt]
+Graph-RAG & Partial direction & Curriculum graph, mastery overlay, prerequisite guidance, and review ordering; no graph-based retrieval of document evidence. \\[5pt]
+Spaced repetition & Implemented core & Mastery-based review dates, due queue, self-ratings, quiz updates, and persistent history; no background notifications or automatic quiz delivery. \\[5pt]
+External agentic workflows & Partial, optional & Web-search fallback after retrieval rejection; the optional search package must be installed and its live behaviour validated. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\subsection{High-Level Workflow}
+
+Student and tutor interact through a continuous feedback loop:
+\begin{figure}[H]
+  \centering
+  \reportimage[0.85\textwidth]{image/workflow_current.png}
+  \caption{Current workflow: document upload and hybrid retrieval lead to an adaptive answer; quiz or review events update mastery and scheduling; curriculum prerequisites inform guidance and review order.}
+  \label{fig:workflow_current}
+\end{figure}
+\begin{enumerate}[leftmargin=2.5em, itemsep=6pt]
+  \item \textbf{Initialisation and Context Ingestion.} An authenticated student creates a session and uploads course documents. Text is split into overlapping chunks, embedded, and stored with session and document identifiers in PostgreSQL.
+  \item \textbf{Querying and Retrieval.} Dense cosine-distance search and TF--IDF retrieval produce candidate passages. Reciprocal Rank Fusion combines the rankings and a document-diversification step selects context from the candidate sources. A separate LLM grades passage relevance.
+  \item \textbf{Learner-Aware Prompt Construction.} The system loads persistent preferences and the topic mastery summary. When a profile is available, a learning advisor considers subject prerequisites and supplies a briefing on explanation depth and pacing. Retrieved context and recent conversation messages complete the generation prompt.
+  \item \textbf{Adaptive Response Generation.} The answer is streamed to the browser. Document names, available PDF page numbers, and retrieved snippets are supplied separately for source inspection. If no passages survive grading, an optional web-search branch is attempted before a general-knowledge fallback.
+  \item \textbf{Assessment and Review.} Session quizzes draw on document excerpts; topic quizzes support focused practice. Each recorded answer updates the topic's mastery, review schedule, and history. Students can also submit a manual review rating. The dashboard presents topics due for revision and their current mastery categories.
+\end{enumerate}
+
+\subsection{Interactive Remediation Loop}
+
+Within the Knowledge Profile interface, topics are grouped by subject and classified as Weak, Average, or Strong. Selecting a topic opens an explanation and a four-question practice quiz tailored through the supplied mastery level. This topic-specific route uses the language model's knowledge and does not retrieve passages from an uploaded session. It therefore supports general revision rather than guaranteed course-document coverage.
+
+Recorded answers update the authenticated user's Knowledge Profile and review schedule in PostgreSQL. Review-queue links carry a topic identifier so that a quiz can target the selected record even when topic names repeat across subjects. The topic page waits for answer-saving requests before displaying successful completion; failed saves are reported. Existing persisted scores are not retroactively corrected by this change, and the complete browser workflow should be checked after deploying the updated backend and frontend.
+
+\section{System Architecture}
+
+The Context-Aware Adaptive Tutoring System is built as a modern web app with a decoupled
+architecture that uses Python for AI orchestration and a modular frontend for a smooth user
+experience. The system is essentially stateless at the API layer, this means that the
+intelligence is kept up by carefully adding the database's persistent learner state to the
+Large Language Model at runtime.
+
+\subsection{Architectural Diagram}
+
+The system architecture can be seen as three main layers: the Client Layer, the Application
+(Middleware) Layer, and the Data/AI Layer.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.85\textwidth]{image/architecture_current.png}
+  \caption[Three-layer architecture of the Adaptive Tutoring System]%
+         {Current architecture: browser interfaces connect to FastAPI; the backend coordinates hybrid retrieval, relevance grading, learner guidance, and generation; PostgreSQL stores documents, profiles, review events, and curriculum edges.}
+  \label{fig:architecture}
+\end{figure}
+
+\subsubsection{Client Layer (Frontend)}
+This layer comprises interactive web interfaces such as Knowledge Dashboard, Chat UI,
+Quiz UI. It heavily relies on Server Sent Events to display text responses from AI in real
+time. The client is responsible for taking user queries, document upload and feedback on
+generated quizzes.
+
+\subsubsection{Application Layer (FastAPI Backend)}
+The FastAPI server acts as the central orchestrator which routes incoming requests to highly
+specialized micro-components:
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{RAG Engine:} Triggers document processing pipelines.
+  \item \textbf{Personalization Tracker and Scheduler:} Update persistent topic mastery, review dates, and event history in PostgreSQL.
+  \item \textbf{Curriculum Graph and Learning Advisor:} Supply prerequisite relationships and learner-specific guidance.
+  \item \textbf{LLM Chain Builder:} Prepares the final complex instruction which is
+        set to be sent out to external APIs.
+\end{itemize}
+
+\subsubsection{Data and AI Layer}
+\begin{itemize}[leftmargin=2em]
+  \item \textbf{PostgreSQL with pgvector:} Stores document chunks and their embeddings alongside users, sessions, messages, documents, preferences, subject registrations, and topic mastery.
+  \item \textbf{Curriculum and Review Tables:} Subject-level prerequisite edges are shared across users, while mastery and review events remain user-specific.
+  \item \textbf{Hosted Model Services:} Gemini provides document/query embeddings and relevance grading. Groq hosts the explanation, quiz, memory, and learning-guidance generation calls.
+\end{itemize}
+
+\subsection{Client--Server Interaction Model}
+
+The data exchange between the client and server uses an interaction model which combines
+standard RESTful API calls with streamed HTTP responses so that students can read generated text as it arrives.
+
+\begin{itemize}[leftmargin=2em, itemsep=4pt]
+  \item \textbf{Synchronous REST APIs} use standard HTTP, POST, GET, and DELETE
+        requests to handle file uploads, session creation, knowledge profile retrieval, and
+        memory deletions. For example, when a user uploads a new chapter of a textbook,
+        the client will wait for the server to confirm that the vector store has been built
+        before letting the user start a chat.
+
+  \item \textbf{Asynchronous Content Streaming:} The core chat endpoint
+        (\texttt{/api/chat}) uses a FastAPI streaming response. After retrieval, grading, and learner guidance are complete, the backend forwards generated text chunks to the browser using the
+        \texttt{text/event-stream} media type.
+
+  \item \textbf{Automatic State Synchronization:} The server acts as the single source
+        of truth. When the client submits a quiz (\texttt{/api/quiz/answer}), the server
+        updates the knowledge profile in real time. The next time the user sends a chat, the
+        server will automatically pull the new updated profile and add it to the system
+        prompt without the user needing to tell their state explicitly.
+\end{itemize}
+
+\section{Core Modules of the Tutoring System}
+
+The system combines retrieval, dual-memory personalisation, adaptive generation, assessment, curriculum relationships, and scheduled review. Several model calls execute sequentially before answer streaming begins.
+
+\subsection{Retrieval-Augmented Generation (RAG) Pipeline}
+
+As discussed above, standard language models suffer knowledge cutoffs and in that case may
+give incorrect statement which we say ``hallucination''. This generally happens when niche
+academic questions are asked. The system relies on a localized Retrieval-Augmented
+Generation pipeline to improve grounding and make retrieved evidence inspectable.
+
+\subsubsection{Document Ingestion and Preprocessing}
+The user can upload PDF, TXT, and DOCX files. A recursive character splitter produces chunks with a target size of 512 characters and an overlap of 75 characters. Chunk metadata retains the document identifier, original filename, and available PDF page number. Text extraction does not include OCR or semantic interpretation of diagrams.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.9\textwidth]{image/PODI.png}
+  \caption[Document ingestion pipeline]%
+         {Process of Document Ingestion}
+  \label{fig:doc_ingestion}
+\end{figure}
+
+\subsubsection{Vector Embeddings and pgvector Integration}
+The implementation uses Gemini's \texttt{gemini-embedding-001} service with a configured output size of 768 dimensions. Vectors and source metadata are stored in the \texttt{document\_chunks} table using pgvector. Additional uploads append chunks to the session, allowing multiple documents to contribute to retrieval. This replaces the earlier per-session FAISS index.
+\begin{figure}[H]
+  \centering
+  \reportimage[0.9\textwidth]{image/embeddings_current.png}
+  \caption{Embedding storage: parsed chunks and source metadata are embedded and inserted into the session-scoped PostgreSQL document-chunk table.}
+  \label{fig:embeddings_current}
+\end{figure}
+
+\subsubsection{Context Retrieval}
+When the student submits a query, its embedding is compared with the session's document embeddings using pgvector cosine distance. A complementary TF--IDF ranking captures lexical overlap. The current code executes the dense and lexical searches sequentially. The two ranked lists are combined using Reciprocal Rank Fusion (RRF):
+\begin{equation}
+  \operatorname{RRF}(d)=\sum_{r\in\{\mathrm{dense},\mathrm{sparse}\}}
+  \frac{1}{60+\operatorname{rank}_{r}(d)}.
+  \label{eq:rrf}
+\end{equation}
+Only lists containing a candidate contribute to its score. The current retriever requests 24 candidates from each search and selects up to four chunks after round-robin diversification across source documents. This encourages document coverage, but is not a guarantee that every uploaded file is relevant or represented. Cosine similarity is defined as:
+
+\begin{equation}
+  \cos(\theta) = \frac{\mathbf{A} \cdot \mathbf{B}}
+                      {\|\mathbf{A}\|\,\|\mathbf{B}\|}
+               = \frac{\displaystyle\sum_{i=1}^{n} A_i B_i}
+                      {\sqrt{\displaystyle\sum_{i=1}^{n} A_i^2}\;
+                       \sqrt{\displaystyle\sum_{i=1}^{n} B_i^2}}
+  \label{eq:cosine}
+\end{equation}
+
+where $\mathbf{A}$ and $\mathbf{B}$ are embedding vectors.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.85\textwidth]{image/retrieval_current.png}
+  \caption{Hybrid corrective retrieval: dense and TF--IDF candidates are fused and diversified, then graded for relevance before generation. Optional web search is attempted only when no retrieved passage is retained.}
+  \label{fig:rag_pipeline}
+\end{figure}
+
+\subsubsection{Corrective Retrieval and Optional Web Fallback}
+A Gemini grading call receives the question and retrieved passages together and returns the identifiers of useful passages. This is relevance selection rather than a calibrated numerical confidence score. Rejected passages are excluded from the answer context. If grading fails, the implementation retains the original passages so that a grader outage does not stop all document answering.
+
+If no passage is retained, the fallback function attempts a DuckDuckGo search through the optional \texttt{ddgs} package and uses up to three result snippets with titles and URLs. It does not crawl full articles, verify peer review, or repeatedly plan tool calls. The package is commented out in the runtime requirements and absent from the inspected environment, so web-backed responses cannot be claimed as demonstrated here. If search is unavailable or returns no results, the model receives a general-knowledge fallback instruction.
+
+For retained document context, the browser exposes filenames, available page numbers, and snippets through source controls. These identify context supplied to the generator rather than establish sentence-level factual support. The general-knowledge branch returns no source records, and its source label is not explicitly transmitted to the frontend; a consistent visible fallback notice remains a needed improvement.
+
+\subsection{Dual-Memory Personalisation Engine}
+
+A human tutor excels because they remember a student's history. To replicate this, our
+system introduces a dual-memory approach consisting of both quantitative analytics and
+qualitative traits.
+
+\subsubsection{The Knowledge Profile Tracker (Quantitative Memory)}
+This module is dynamically updated based on how well a student performs on individual
+sub-topics in quizzes. As the student answers these quizzes, the tracker adjusts a numeric
+score for that specific topic. The topic is classified into a three tiers: Weak ($<$50\%),
+Average (50--75\%), or Strong ($>$75\%).
+
+\subsubsection{Persistent User Memory (Qualitative Memory)}
+For preferences which the user wants to persist in all the sessions present, the user can
+input their preferences to Memory LLM. The LLM remembers this information all across the
+sessions by inculcating this into the system prompt given to the LLM for text generation.
+If a student says that they are comfortable in Hindi, the preference is supplied to subsequent generation prompts. Following a preference remains model-dependent rather than a hard output constraint.
+
+\begin{table}[H]
+  \centering
+  \caption{Knowledge tier thresholds and corresponding explanation-style guidance}
+  \label{tab:memory_tiers}
+  \begin{tabular}{@{}p{2cm} p{2.5cm} p{8cm}@{}}
+    \toprule
+    \textbf{Memory Tier} & \textbf{Score Range} & \textbf{Prompt Directive to LLM} \\
+    \midrule
+    Weak    & $< 50\%$ & Simple, analogy-driven, step-by-step explanations with minimal jargon. \\[6pt]
+    Average & $50$--$75\%$ & Balanced explanations with supporting examples. \\[6pt]
+    Strong  & $> 75\%$ & Concise, technical explanations that focus on advanced details. \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\subsection{Adaptive Generation Engine}
+
+The Adaptive Generation Engine acts as the central brain of the platform. It is responsible
+for combining the objective facts retrieved from the RAG pipeline with the personalization
+constraints retrieved from the Memory engine.
+
+\subsubsection{Dynamic System Prompts}
+Standard chatbots use a static system prompt (e.g., ``You are a helpful assistant''). The
+proposed model gets a highly dynamic prompt. At inference time, the backend adds specific
+instructional constraints such as using analogy-heavy text if the knowledge profile shows a
+Weak score, and using specific rules depending on the Persistent Memory extraction.
+
+\subsubsection{Response Generation}
+The fully constructed, heavily contextualized prompt is then passed to the model via the
+LangChain framework. The model generates an explanation conditioned on the retrieved context and learner guidance. Factual correctness and compliance with the requested style remain properties to evaluate rather than enforceable guarantees.
+
+\subsubsection{Prerequisite-Aware Learning Guidance}
+Before answering, a dedicated advisor receives the current question, the learner's mastery summary, and the relevant subject graphs. It produces a two-to-four-sentence briefing that can recommend reviewing a weak or unproven prerequisite before introducing an advanced concept. The answer generator uses this briefing for depth, tone, and pacing. When the profile is empty or the advisor fails, the system falls back to ordinary generation or direct profile-based prompt rules. This extra model call adds latency before the answer stream begins.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.82\textwidth]{image/prompt_assembly_current.png}
+  \caption[Adaptive Generation Engine: Dynamic Prompt Assembly Matrix]%
+         {Dynamic Prompt Assembly Matrix.}
+  \label{fig:gen_engine}
+\end{figure}
+
+\subsection{Dynamic Assessment and Quiz Generation}
+
+Evaluation of the student is very important for the feedback loop and to provide observed data
+to update the Knowledge Profile Tracker.
+
+\subsubsection{LLM-Driven Quiz Generation}
+Instead of using static prewritten question banks, the system direct the LLM to generate
+six multiple-choice questions based on up to ten randomly sampled chunks from the session's uploaded documents. Subject preferences and available curriculum node names guide question labels. A separate topic-practice route requests four questions from the topic and mastery prompt. The questions are returned in the form of structured JSON to ensure stable UI
+rendering.
+
+\subsubsection{Adaptive Scoring and Feedback Loop}
+The interface compares the selected option with the model-generated answer index and submits the correctness flag to the backend. The backend currently trusts this client-reported flag; independent server-side grading against a stored question is not implemented. Topic mastery is updated using
+\begin{equation}
+  M_t=0.3x_t+0.7M_{t-1},
+  \label{eq:ema}
+\end{equation}
+where $x_t=1$ for a correct answer and $x_t=0$ for an incorrect answer. An uninitialised mastery score starts at zero. The score is an operational progress indicator, not a calibrated probability that the learner understands the topic. Multiple answers concerning one topic produce multiple updates.
+
+\subsection{Curriculum Knowledge Graph}
+\label{sec:knowledge_graph}
+The graph stores directed prerequisite relationships within each subject in the \texttt{topic\_edges} table. It is shared across users and separated from their private mastery records. Four subjects have curated seed graphs: Data Structures, Operating Systems, Computer Networks, and Database Management. Adding another subject can trigger an LLM-generated curriculum of 5--20 topics. The generation path normalises names, checks duplicate names, removes invalid or self-referential prerequisites, and rejects cycles before storing edges. These structural checks do not establish pedagogical correctness.
+
+The graph has three implemented uses. First, the Knowledge Map displays topics in prerequisite-depth columns with the student's mastery category or a ``Not tracked yet'' label. Second, a gap-analysis API traverses upstream prerequisites of weak topics and flags weak or unattempted prerequisites. This is a heuristic diagnostic aid; the current interface does not provide a dedicated view of this API's complete gap report. Third, the learning advisor incorporates prerequisite relationships into its answer-planning prompt. Review ordering also gives selected weak prerequisites priority where both prerequisite and dependent topic are already due and weak.
+
+Session quiz prompts reuse curriculum node names when available, with fuzzy matching for near-miss labels. Exact subject and topic naming still matters, so naming variants can weaken the link between assessment records and graph nodes. The implemented graph is a curriculum knowledge graph, not full GraphRAG: it neither extracts entities from document chunks nor retrieves document evidence by traversing graph paths.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.9\textwidth]{image/knowledge_map_current.png}
+  \caption{Knowledge Map screenshot placeholder: show one subject's prerequisite-depth columns, mastery badges, and untracked topics.}
+  \label{fig:knowledge_map_current}
+\end{figure}
+
+\subsection{Spaced Repetition and Review History}
+\label{sec:srs}
+The scheduler extends mastery tracking with explicit review dates. For a successful event, the updated mastery category selects a base interval of 1 day (Weak), 3 days (Average), or 7 days (Strong). The interval grows linearly with the current consecutive-success streak and is capped at 60 days:
+\begin{equation}
+ I_t=\begin{cases}
+ \min\{60,b(M_t)s_t\}, & \text{successful event},\\
+ 1, & \text{unsuccessful event},
+ \end{cases}
+ \label{eq:review_interval}
+\end{equation}
+where $s_t$ includes the current success. A failure resets the streak to zero and schedules review for the next day, even after many earlier successes. Each quiz answer is currently a review event, so several correct answers in one sitting can extend the interval. This is a transparent heuristic scheduler, not an implementation of Anki's scheduling algorithm or a fitted forgetting-curve model.
+
+A manual review accepts a rating from 0 to 10 and optional notes. The rating divided by ten replaces $x_t$ in Equation~\ref{eq:ema}; ratings of at least 5 count as successful review events. Manual ratings update mastery and scheduling but do not increase quiz-question or correct-answer totals. Both event types are recorded with before/after mastery, review time, interval, and next review date. Quiz events can additionally retain question and answer text.
+
+Mastery updates and history writes occur in the same database transaction, with a row lock protecting concurrent updates. The history is user-scoped and paginated; older activity from before event logging is not reconstructed. The review dashboard shows due and overdue topics, average mastery, and strongest/weakest records with subject labels. The queue includes dates due today or earlier and supports API-level category filtering and urgency/recent ordering. Calendar-day comparisons use the server's clock.
+
+The scheduler runs when an answer or manual rating is recorded. It does not send background notifications, automatically launch future quizzes, or infer memory decay between interactions. Students initiate revision through the review interface.
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.9\textwidth]{image/review_progress_current.png}
+  \caption{Review and Progress screenshot placeholder: due queue, subject-aware mastery statistics, and review history after a saved quiz or manual review.}
+  \label{fig:review_progress_current}
+\end{figure}
+
+\section{Implementation Details and Technology Stack}
+
+The system was designed to be modular, quick to make decisions, and have low overhead.
+This lets you change the AI behavior without changing the web server logic.
+
+\subsection{Backend Architecture}
+FastAPI routes separate document/session management, chat streaming, quizzes, profiles, curriculum queries, and review operations. Request models validate API inputs and authentication dependencies check ownership where user-specific resources are accessed. Model orchestration remains within these application modules; it is not an independent multi-agent execution platform.
+
+\subsection{AI and Data Pipelines}
+\begin{itemize}[leftmargin=2em, itemsep=4pt]
+  \item \textbf{Generation.} The configured generation model is \texttt{openai/gpt-oss-120b} through Groq. Shared clients are used for routine responses, explanations, and quiz generation; the learning advisor uses a separate low-reasoning-effort configuration.
+  \item \textbf{Embedding and Grading.} Gemini's \texttt{gemini-embedding-001} supplies 768-dimensional vectors, and \texttt{gemini-flash-latest} grades retrieved context. These are hosted API calls rather than local Ollama inference.
+  \item \textbf{Retrieval.} PostgreSQL/pgvector handles dense search and a TF--IDF model provides lexical retrieval. A process-local LRU cache holds up to 32 session retrievers and is refreshed when documents change.
+\end{itemize}
+
+\subsection{Data Storage and State Management}
+PostgreSQL replaces the earlier file-based JSON state and FAISS storage. A unique user--subject--topic key identifies each mastery record, while session and document identifiers scope uploaded evidence. Authentication and ownership checks gate protected APIs. The curriculum graph is shared by subject; learner preferences, performance, and review histories remain user-specific. Chat generation replays the last four user/assistant messages while retaining the full stored session history. This bounds conversation replay, not the entire assembled prompt or provider quota usage.
+
+\subsection{Frontend Interface}
+There is no need for a heavy weight JavaScript library like React or Angular to manage two
+channel communications in the web based client. Given that there can be an amount of
+latency in generating AI content, the interaction portal (chat) utilizes the
+\texttt{text/event-stream} media type. The Python back-end generates text token by token
+and sends it to the html/js front-end through Server Sent Events (SSE).
+
+\begin{table}[H]
+  \centering
+  \caption{Technology stack of the Context-Aware Adaptive Tutoring System}
+  \label{tab:tech_stack}
+  \begin{tabular}{@{}ll@{}}
+    \toprule
+    \textbf{Layer} & \textbf{Technology} \\
+    \midrule
+    Backend Server      & FastAPI (Python) \\
+    AI Orchestration    & LangChain \\
+    Generation          & Groq-hosted GPT-OSS-120B \\
+    Embedding / Grading & Gemini services \\
+    Database / Vectors  & PostgreSQL with pgvector \\
+    Lexical Retrieval   & TF--IDF with RRF fusion \\
+    Frontend            & HTML, CSS, Vanilla JavaScript \\
+    \bottomrule
+  \end{tabular}
+\end{table}
+
+\section{Advantages over Traditional Systems}
+
+\subsection{Reduced Hallucinations through Source Grounding}
+The system supplies retrieved course passages to the generator and exposes their source metadata to the student. Hybrid retrieval and relevance grading are intended to reduce unrelated context. However, an LLM can still misinterpret passages or generate unsupported statements. Web search and general-knowledge fallback also extend beyond the uploaded syllabus, so grounding should be assessed for each response rather than assumed from the use of RAG.
+
+\subsection{Persistent Topic-Level Personalisation}
+A standard chatbot resets user information on new chats. However the proposed system
+always maps real time Knowledge Profile across all sessions. So if a student performs poor
+in a quiz in session\_1 and asks for the same topic in session\_2, the model will still know
+that the user was weak in that topic and hence give an explanation accordingly. The user has
+the option to delete its knowledge base too if the user feels that there needs to be a reset.
+
+
+\section{Application Showcase}
+This section presents the application interfaces. Existing screenshots should be retained where they match the current version; labelled placeholders reserve space for the current graph and review workflows. Screenshots illustrate functionality and are not measurements of educational effectiveness. 
+\subsection{Dashboard}
+The Main section of the application, the user can upload documents over here.Once the documents have been uploaded, The user can ask questions and the model will respond based on the context retrieved by it during the retrieval process. 
+The dashboard acts as one-way go for every task. The User can view the active documents, their knowledge profile , long term memory in the dashboard
+\begin{figure}[H]
+  \centering
+  \reportimage[0.82\textwidth]{image/Dashboard.png}
+  \caption[Application Showcase : Dashboard]%
+         {User Dashboard}
+  \label{fig:gen_engine-2}
+\end{figure}
+
+
+\subsection{Quiz}
+To generate a quiz the user needs to click on the generate quiz button . On clicking , the model will take some time and request six questions from sampled uploaded-document excerpts. The separate topic-page quiz requests four questions. Each question would be given a topic tag, so that it can be used to track the user knowledge base. On a correct answer, the specific topic;s point would increase while for incorrect , the points would decrease. The user would be provided why the correct option is correct too. 
+\begin{figure}[H]
+  \centering
+  \reportimage[0.82\textwidth]{image/Quiz.png}
+  \caption[Application Showcase : Quiz Component]%
+         {Quiz Component}
+  \label{fig:gen_engine-3}
+\end{figure}
+
+
+\subsection{Knowledge base}
+The user can view their Knowledge Base from the Sidebar. The folders would be based on the subjects. Now these subjects can either be provided by the user itself or the model would itself predict the subject from the context. 
+\begin{figure}[H]
+  \centering
+  \reportimage[0.82\textwidth]{image/KB.png}
+  \caption[Application Showcase : Knowledge Base Subjects]%
+         {Subject Wise Knowledge Base}
+  \label{fig:gen_engine-4}
+\end{figure}
+
+
+The user can then click on any of the folders. On clicking , the user would see all the topics of that specific subject in the categories of Weak , average and Strong. If the user wishes, they can delete any of the topics from the knowledge base too.
+\begin{figure}[H]
+  \centering
+  \reportimage[0.82\textwidth]{image/KB2.png}
+  \caption[Application Showcase : Knowledge Base Topics]%
+         {Topic Wise Mastery for a Subject.}
+  \label{fig:gen_engine-5}
+\end{figure}
+
+
+The user can click on any of the topics. Based on the mastery of that topic, the model would give a proper explanation of that topic . If the topic is weak , then the user would be provided an easy explanation , similarly if the topic is strong , a crisp and advanced explanation would be provided. Below will be a quiz generated ,that the user can answer and can improve their score.
+\begin{figure}[H]
+  \centering
+  \reportimage[0.82\textwidth]{image/KB3.png}
+  \caption[Application Showcase : Model Topic Explanation]%
+         {Model Explanation on clicking a Topic}
+  \label{fig:gen_engine-6}
+\end{figure}
+
+
+\subsection{User Memory}
+The user memory acts as the interface from which the user can enter all of the information that they require to be persistent across all the sessions. THe user can input their preferences and the model will process the input and save it to the user memory . The user can delete their preferences too. 
+The user is also given the option to specify the subjects that should be present in the knowledge base. These subjects guide the labels assigned to session quiz questions; the quiz content is still prompted to follow the uploaded excerpts. This is a prompt constraint rather than a strict server-side syllabus validator.
+\begin{figure}[H]
+  \centering
+  \reportimage[0.82\textwidth]{image/Memory.png}
+  \caption[Application Showcase : User Memory]%
+         {User Memory}
+  \label{fig:gen_engine-7}
+\end{figure}
+
+
+\subsection{User Profile}
+The user can view their profile by clicking on the avatar icon on the sidebar . They can change their name and description. They can also view their total quiz questions answered and the average mastery score across the entire knowledge base
+\begin{figure}[H]
+  \centering
+  \reportimage[0.82\textwidth]{image/profile.png}
+  \caption[Application Showcase : User Profile]%
+         {User Profile}
+  \label{fig:gen_engine-8}
+\end{figure}
+
+%============================================================
+% CHAPTER 5 — SIMULATION AND RESULTS
+%============================================================
+\chapter{Simulation and Results}
+
+\section{Quantitative Evaluation}
+The current implementation can be evaluated at two levels: functional correctness of the application workflow and quality of the generated educational content. These levels should be reported separately. A passing API or scheduler test does not measure factual accuracy, retrieval precision, or student learning gains.
+
+\subsection{Functional Verification of the Current Implementation}
+The repository contains a database-backed smoke suite, isolated scheduling tests, and a JavaScript review-history widget check. The smoke suite creates a temporary PostgreSQL database and exercises non-LLM endpoints; it does not modify the application database or call live generation services. In the recorded development run, all 144 smoke checks passed. The five scheduling unit tests and the review-history widget checks also passed. These results apply to the inspected development version and are not a claim of complete browser or deployment validation.
+
+\begin{table}[H]
+\centering\small
+\caption{Functional verification and the limits of its evidence}
+\label{tab:functional_checks}
+\begin{tabular}{@{}p{3.1cm} p{5cm} p{4.3cm}@{}}
+\toprule
+\textbf{Check group} & \textbf{Behaviour covered} & \textbf{Interpretation} \\
+\midrule
+API smoke suite & Authentication, ownership, profile updates, review history, duplicate-name topic identity, deletion and route compatibility & 144 checks passed; live LLM quality is outside the suite. \\[5pt]
+Scheduler unit tests & Mastery thresholds, failure reset, success restart, repeated failures and interval cap & Five tests passed; these verify rules rather than retention gains. \\[5pt]
+History widget checks & On-demand loading, pagination, escaped text, refresh and request failures & Passed in a simulated DOM; not a complete browser interaction test. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+An illustrative calculation explains the update rule without introducing an experimental result. Starting at $M_0=0.30$, four correct answers on the same topic produce $0.51$, $0.657$, $0.7599$, and $0.83193$. The category therefore progresses from Weak to Strong. With an initial success streak of zero, the final interval is $7\times4=28$ days. These values follow directly from Equations~\ref{eq:ema} and~\ref{eq:review_interval}; they are not measured evidence of 28-day retention.
+
+\subsection{Hallucination Rate}
+RAG does not eliminate hallucinations. A defensible hallucination-rate estimate requires a fixed question set, documented reference answers, and a consistent annotation procedure for unsupported statements. The inspected repository does not contain a reproducible evaluation package supporting the earlier report's comparison charts. Accordingly, no measured zero-hallucination result or new numerical superiority claim is made for the current system.
+
+\subsection{Precision}
+Retrieval precision concerns the proportion of retrieved passages judged relevant to a query. Answer relevance is a separate property of the generated response. The hybrid retriever and corrective grader provide mechanisms that may improve relevance, but their effect has not been established by a controlled dense-only versus hybrid versus hybrid-plus-grader comparison in the inspected evidence. Such a comparison remains part of the evaluation plan.
+
+\subsection{Adaptiveness}
+\label{sec:adaptiveness}
+The implemented adaptation can be demonstrated by supplying different mastery profiles for the same question and inspecting the learning-guidance briefing and generated explanation. A controlled evaluation should hold the document set, question, provider configuration, and grading rubric constant. Multiple runs are needed because generation can vary.
+
+\subsubsection{Flesch Reading Ease}
+The previous report proposed readability as one indicator of explanation complexity. The Flesch Reading Ease score is
+\begin{equation}
+  \text{FRE}=206.835-1.015\frac{\text{Total Words}}{\text{Total Sentences}}
+  -84.6\frac{\text{Total Syllables}}{\text{Total Words}}.
+  \label{eq:fre}
+\end{equation}
+Higher values indicate easier prose under this measure. Technical vocabulary, equations, and code can distort its interpretation, so it should complement rather than replace expert judgement. The earlier numerical readability averages are not carried forward as verified results because their underlying response samples and scoring procedure are unavailable in the inspected project.
+
+\subsubsection{LLM as a Judge}
+A model-based judge could score explanation difficulty and prerequisite coverage using a published rubric. Such scores require recorded prompts, model settings, response samples, and checks against human judgements. No new judge scores or learning-effectiveness statistics are asserted here.
+
+\begin{table}[H]
+\centering\small
+\caption{Planned evaluation of the semester additions}
+\label{tab:adaptiveness}
+\begin{tabular}{@{}p{3.2cm} p{5cm} p{4.2cm}@{}}
+\toprule
+\textbf{Aspect} & \textbf{Proposed comparison} & \textbf{Evidence still required} \\
+\midrule
+Retrieval relevance & Dense-only, hybrid, and graded hybrid on the same queries & Labelled passages and recorded retrieval outputs. \\[5pt]
+Prerequisite guidance & Profile-only prompting versus profile plus graph briefing & Expert rubric and saved response pairs. \\[5pt]
+Review effectiveness & Scheduled review versus unscheduled revision & A consented longitudinal study and delayed assessments. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Qualitative Analysis}
+
+The following examples are retained from the earlier report as qualitative illustrations. They have not been re-run as a controlled evaluation of the current model configuration. Where the original image assets are unavailable, the report reserves a labelled placeholder rather than recreating an unobserved response.
+
+\subsection{Hallucination Example: GPCR in VANET Context}
+
+The earlier report describes an ambiguous-acronym example: a question intended to refer to GPCR in a VANET context received an answer using the biological meaning. This illustrates a domain-grounding problem; an ambiguous acronym alone is not sufficient evidence of a model-wide hallucination rate.
+
+\textbf{Question: What is GPCR?}
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.85\textwidth]{image/LLMR1.png}
+  \caption[General LLM response to the GPCR query (incorrect domain)]%
+         {LLM Response to the Question: GPCR is a term used in VANET}
+  \label{fig:gpcr_llm}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.85\textwidth]{image/ARR1.png}
+  \caption[Adaptive Tutor response to the GPCR query (correct domain)]%
+         {Adaptive Tutor Response to GPCR}
+  \label{fig:gpcr_tutor}
+\end{figure}
+
+\subsection{Adaptiveness Example: Data Principal}
+
+Here are the 2 responses based on the difference on the user's mastery on the topic, the same
+question was asked to the tutor and it gave 2 different response, one is when the question
+that the user asked was of weak mastery and other being strong.
+
+\textbf{Question: What is Data Principal?}
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.85\textwidth]{image/ARR2.png}
+  \caption[Tutor response with a \textit{Strong} topic mastery profile]%
+         {Tutor Response when the topic mastery was High. Notice how it directly goes in
+          definition mode and gives extra information about the topic asked.}
+  \label{fig:dp_strong}
+\end{figure}
+
+\begin{figure}[H]
+  \centering
+  \reportimage[0.85\textwidth]{image/ARR4.png}
+  \caption[Tutor response with a \textit{Weak} topic mastery profile]%
+         {Tutor Response when the topic mastery was Low. Notice how it now gives an
+          analogy to explain what a Data principal is.}
+  \label{fig:dp_weak}
+\end{figure}
+
+
+\subsection{Demonstration of the Extended Learning Loop}
+A current-version demonstration can use a seeded subject such as Operating Systems. After the student answers a document quiz, the Knowledge Profile records topic mastery. Opening the subject's Knowledge Map shows prerequisite-depth columns with mastery overlays. A subsequent chat question is processed with the mastery summary and curriculum briefing, while the Review and Progress page presents the next revision activity.
+
+The demonstration should include an incorrect answer after a successful streak, confirming that the review date returns to the next day, and a manual review rating, confirming that quiz-question totals do not increase. Opening review history should expose the event type and before/after mastery. These are reproducible demonstration steps supported by the implemented routes; screenshots and live model outputs should be captured from the updated running application before submission.
+
+%============================================================
+% CHAPTER 6 — CONCLUSIONS AND FUTURE WORK
+%============================================================
+\chapter{Conclusions and Future Work}
+
+\section{Conclusions}
+This project develops a Context-Aware Adaptive Tutoring System that connects course-document retrieval with persistent learner state. The earlier version established the document-chat, memory, and quiz foundation. The current semester extends that foundation with a curriculum knowledge graph, prerequisite-aware answer guidance, and scheduled revision with persistent review history.
+
+The principal contributions of this iteration are:
+\begin{description}[leftmargin=3em, itemsep=6pt]
+  \item[Curriculum-Aware Personalisation.] A subject-level prerequisite graph complements individual mastery records. The Knowledge Map and learning advisor make these relationships available during study and explanation generation.
+  \item[An Inspectable Review Loop.] Quiz responses and manual ratings update mastery, schedules, and history transactionally. The dashboard makes due topics and review outcomes visible to the learner.
+  \item[Improved Retrieval and Persistence.] PostgreSQL/pgvector, lexical retrieval, rank fusion, relevance grading, and source metadata support multi-document tutoring and persistent state across sessions.
+\end{description}
+
+These additions represent a meaningful progression from a reactive question-answering prototype to a tutoring application that also supports planning and inspecting revision. Functional tests support the correctness of selected application behaviours. Claims about improved examination performance, retention, or factual accuracy require further empirical evaluation.
+
+\section{Current Limitations}
+\begin{itemize}[leftmargin=2em, itemsep=6pt]
+  \item \textbf{Assessment validity.} Answer keys are generated by an LLM and correctness is reported by the browser. Server-side grading against stored questions and stricter output validation are needed before using the quiz scores as trusted assessment data. The EMA reflects recent recorded interactions, not a validated cognitive measurement.
+  \item \textbf{Topic identity and curriculum coverage.} Curriculum graphs are shared by subject and may not match a particular uploaded syllabus. LLM-generated edges receive structural checks, but not expert approval. Fuzzy name matching can miss synonyms or merge near-miss labels incorrectly; historical duplicate records are not automatically reconciled.
+  \item \textbf{Revision scope.} The scheduler is a deterministic heuristic, with each quiz answer counted as an event. Several answers in one sitting can increase the interval without evidence of delayed recall. There are no background reminders, automatic micro-quiz delivery, or user-timezone scheduling controls.
+  \item \textbf{Grounding and fallback.} Topic-page tutoring does not retrieve uploaded material. Optional web search is not active without its dependency and has no peer-review filter. General-knowledge fallback lacks a reliable dedicated UI notice. The grader retains original context on errors, so relevance filtering is not guaranteed on every request.
+  \item \textbf{Integration and evaluation.} Browser-level synchronisation between quiz completion, Knowledge Profile, and the review dashboard still requires end-to-end regression testing, including navigation back to previously loaded pages. The prerequisite-gap API is not yet presented through a dedicated UI. Model calls, provider limits, and database latency affect responsiveness, and no controlled educational study has yet established learning gains.
+\end{itemize}
+
+\section{Future Work}
+The earlier graph and spaced-repetition proposals have progressed into implemented components described in Chapter~4. Future work therefore focuses on extending and validating their current scope:
+\begin{enumerate}[leftmargin=2.5em, itemsep=8pt]
+  \item \textbf{Multi-Modal Interaction.} Add OCR and image understanding for scanned notes, equations, and diagrams, together with speech input/output. Current document loading extracts text and does not provide these modalities.
+  \item \textbf{Document-Linked Knowledge Graphs.} Extend the curriculum graph with explicit links to document passages, stable concept identifiers, and reviewed relations. Graph traversal could then retrieve evidence for multi-hop questions. Full GraphRAG remains a potential extension rather than a description of the current knowledge map.
+  \item \textbf{Review Scheduling Refinement.} Group practice attempts into review sessions, distinguish immediate practice from delayed recall, add opt-in reminders and learner-timezone support, and evaluate interval policies through longitudinal assessments.
+  \item \textbf{Reliable External Retrieval.} Enable and test the existing optional web-search branch, add source-quality controls and visible provenance for every fallback path, and evaluate whether more structured tool workflows improve answers. Peer-reviewed search and autonomous multi-step tool planning remain unimplemented.
+  \item \textbf{Assessment and Integration Hardening.} Add server-authoritative answer grading, improve topic-name reconciliation, connect prerequisite-gap reports to a dedicated interface, and verify dashboard refresh behaviour end to end. Extend reproducible evaluation to grounding, adaptation, and user learning outcomes.
+\end{enumerate}
+
+%============================================================
+% APPENDICES
+%============================================================
+\appendix
+
+\chapter{Project Directory Structure}
+The implementation separates API routes, document retrieval, learner modelling, session persistence, and browser interfaces.
+\begin{verbatim}
+GuruAI/
+  server.py                  # FastAPI application entry point
+  requirements.txt           # Runtime dependencies
+  report.tex                 # Project report
+  src/
+    api/routers/             # Chat, quiz, profile, SRS and other APIs
+    api/retriever_cache.py   # Session hybrid-retriever cache
+    auth/auth.py             # Password and signed-token utilities
+    core/database.py         # PostgreSQL schema and connections
+    core/config.py           # Chunking and API configuration
+    core/llm.py              # Shared generation clients
+    personalization/
+      mastery.py             # EMA, review events and gap analysis
+      spaced_rep.py          # Review scheduling rules
+      topic_graph.py         # Curriculum relationships and traversal
+      topic_graph_seed.py    # Curated and generated graph seeding
+      user_memory.py         # Persistent learner preferences
+    rag/
+      loader.py              # PDF/TXT/DOCX text ingestion
+      embedder.py            # Hosted embeddings and pgvector storage
+      retriever.py           # Dense + TF-IDF retrieval and RRF
+      crag.py                # Relevance grading, optional web fallback
+      learning_advisor.py    # Mastery + prerequisite briefing
+      chain.py               # Adaptive answer generation
+      quiz.py                # Session document quizzes
+      topic_tutor.py         # Topic-based explanations and quizzes
+    sessions/                # Document/session/message persistence
+  static/
+    index.html               # Chat and review dashboard
+    knowledge.html           # Knowledge Profile and Knowledge Map
+    topic.html               # Topic explanation and practice
+    user.html                # User profile
+    widgets/                 # Review queue, stats, rating and history
+  tests/                     # API, scheduler and history checks
+\end{verbatim}
+
+\chapter{System Dependencies}
+The runtime dependencies are declared in \texttt{requirements.txt}. The following list summarises the libraries used by the current implementation rather than the earlier local-model and FAISS stack.
+\begin{lstlisting}
+fastapi, uvicorn, python-multipart, pydantic
+langchain, langchain-core, langchain-community
+langchain-text-splitters, scikit-learn
+langchain-google-genai, langchain-groq
+psycopg2-binary, pgvector
+pypdf, docx2txt, python-dotenv
+# Optional and currently not installed: ddgs
+\end{lstlisting}
+PostgreSQL with the pgvector extension and the configured model-provider credentials are required for the full application. Provider access is unnecessary for the pure scheduler tests. The smoke suite requires a PostgreSQL instance on which it can create and remove a temporary test database. Optional web search needs the separate \texttt{ddgs} dependency and network access.
+
+\chapter{Tracking \& Data Schemas}
+Persistent state is stored in PostgreSQL. The following tables summarise the implemented schema; the source of truth is \texttt{src/core/database.py}.
+
+\section*{C.1 Learner and Session State}
+\begin{longtable}{@{}p{4cm} p{8.4cm}@{}}
+\toprule
+\textbf{Table} & \textbf{Role} \\
+\midrule
+\endhead
+\texttt{users} & Identity, password hash, display name and biography. \\
+\texttt{sessions}, \texttt{messages} & User-owned session state, chat/quiz content, and answer-source metadata. \\
+\texttt{documents} & Uploaded-document identity and metadata. \\
+\texttt{document\_chunks} & Session/document identifiers, extracted text, source metadata, and 768-dimensional embedding. \\
+\texttt{user\_subjects} & The user's selected subjects. \\
+\texttt{user\_memories}, \texttt{memory\_chat\_history} & Persistent preferences and the dedicated memory conversation. \\
+\bottomrule
+\end{longtable}
+
+\section*{C.2 Mastery, Curriculum and Review Events}
+\begin{longtable}{@{}p{3.8cm} p{8.6cm}@{}}
+\toprule
+\textbf{Table} & \textbf{Important fields and interpretation} \\
+\midrule
+\endhead
+\texttt{knowledge\_profile} & User, subject, topic, correct/total quiz answers, EMA score, last review, interval, review count, success streak, and next review date. A unique key covers user, subject and topic. \\[5pt]
+\texttt{topic\_edges} & Subject, source topic, destination topic, relation, weight and provenance. Prerequisite traversal uses the relation and topic names; stored weights do not implement a learned or weighted reasoning algorithm. \\[5pt]
+\texttt{review\_events} & Topic/user identifiers, optional session, event kind, score, mastery before/after, interval, review time, next review, optional question/answers and notes. Quiz and self-rating events remain distinguishable. \\
+\bottomrule
+\end{longtable}
+
+The application writes a new review event in the same transaction as the corresponding mastery and schedule update. The history supports inspection of recorded activity from the time logging is enabled. Topic deletion removes the associated history through the database relationship; it is therefore an application activity history rather than an immutable audit archive.
+
+\chapter*{Bibliography}
+\addcontentsline{toc}{chapter}{Bibliography}
+\markboth{BIBLIOGRAPHY}{BIBLIOGRAPHY}
+
+\begin{enumerate}[leftmargin=3em, label={[{\arabic*}]}, itemsep=6pt]
+  \item \label{cite:lewis2020}
+        Lewis, Patrick, et al. "Retrieval-augmented generation for knowledge-intensive nlp tasks." Advances in neural information processing systems 33 (2020): 9459-9474.
+    
+
+  \item \label{cite:alsafari2024}
+        Bashaer Alsafari, Eric Atwell, Aisha Walker, Martin Callaghan,
+Towards effective teaching assistants: From intent-based chatbots to LLM-powered teaching assistants,
+Natural Language Processing Journal,
+Volume 8,
+2024,
+100101,
+ISSN 2949-7191,
+
+  \item \label{cite:dou2025}
+        Yutao Dou, Yuwei Huang, Xiongjun Zhao, Haitao Zou, Jiandong Shang, Ying Lu, Xiaolin Yang, Jian Xiao, and Shaoliang Peng. 2025. ShennongMGS: An LLM-based Chinese Medication Guidance System. ACM Trans. Manage. Inf. Syst. 16, 2, Article 15 (June 2025), 14 pages. https://doi.org/10.1145/3658451
+
+
+  \item \label{cite:ye2025}
+        Z. Ye, "Intelligent Tutoring Agent with Retrieval-Augmented Generation: A Case Study of Quality Management System Course," 2025 5th International Conference on Consumer Electronics and Computer Engineering (ICCECE), Dongguan, China, 2025, 
+
+
+
+  \item \label{cite:chizzola2024}
+        MyLearningTalk: Developing a
+Generative AI-Powered Intelligent
+Tutoring System
+Tesi di Laurea Magistrale in
+Computer Science and Engineering - Ingegneria In-
+formatica
+Author: Andrea Chizzola
+
+  \item \label{cite:lpitutor}
+        Liu Z, Agrawal P, Singhal S, Madaan V, Kumar M, Verma PK. 2025. LPITutor: an LLM based personalized intelligent tutoring system using RAG and prompt engineering. PeerJ Computer Science 11:e2991 https://doi.org/10.7717/peerj-cs.2991
+
+  \item \label{cite:vujinovic2023}
+        Aleksandar Vujinović, Nikola Luburić, Jelena Slivka, Aleksandar Kovačević,
+Using ChatGPT to annotate a dataset: A case study in intelligent tutoring systems,
+Machine Learning with Applications,
+Volume 16,
+2024,
+100557,
+ISSN 2666-8270,
+https://doi.org/10.1016/j.mlwa.2024.100557.
+
+  \item \label{cite:jiang2024}
+       Jiang, Zhoumingju \& Jiang, Mengjun. (2024). Beyond Answers: Large Language Model-Powered Tutoring System in Physics Education for Deep Learning and Precise Understanding. 10.48550/arXiv.2406.10934. 
+
+\item \label{cite:adaptiverag}
+        Soyeong Jeong, Jinheon Baek, Sukmin Cho, Sung Ju Hwang, and Jong C. Park.
+        ``Adaptive-RAG: Learning to Adapt Retrieval-Augmented Large Language Models through Question Complexity.''
+
+  \item \label{cite:wu2025}
+       Wu, Yuhao, Franziska Roesner, Tadayoshi Kohno, Ning Zhang, and Umar Iqbal. "Isolategpt: An execution isolation architecture for llm-based agentic systems." arXiv preprint arXiv:2403.04960 (2024).
+  \item \label{cite:crag}
+      Corrective Retrieval Augmented Generation
+Shi-Qi Yan*, Jia-Chen Gu2*, Yun Zhu3, Zhen-Hua Ling1
+1National Engineering Research Center of Speech and Language Information Processing,
+University of Science and Technology of China, Hefei, China
+\end{enumerate}
+
+
+
+
+%============================================================
+% END OF DOCUMENT
+%============================================================
+\end{document}
